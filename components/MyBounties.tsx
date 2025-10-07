@@ -7,7 +7,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card, CardContent } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { MobileBottomSection, MOBILE_BOTTOM_SECTION_PADDING } from './MobileBottomSection';
+import { MobileBottomSection } from './MobileBottomSection';
 import { useAppState } from '@/components/app-state';
 import type { Bounty } from '@/components/types';
 import PageMainWrapper from './PageMainWrapper';

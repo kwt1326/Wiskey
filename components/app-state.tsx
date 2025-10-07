@@ -4,15 +4,17 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
 
 import { mockBounties } from '@/components/mock-data';
 import type { AppState, Bounty } from '@/components/types';
+import { useAccount } from 'wagmi';
 
 interface AppStateContextValue extends AppState {
-  connectWallet: () => void;
+  connectWallet: (walletAddress: string) => void;
   openConnectModal: () => void;
   closeConnectModal: () => void;
   addBounty: (
@@ -34,6 +36,7 @@ export function AppStateProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const { address, isConnected } = useAccount();
   const [state, setState] = useState<AppState>({
     isWalletConnected: false,
     userWallet: null,
@@ -41,11 +44,11 @@ export function AppStateProvider({
     showConnectModal: false,
   });
 
-  const connectWallet = useCallback(() => {
+  const connectWallet = useCallback((walletAddress: string) => {
     setState((prev) => ({
       ...prev,
       isWalletConnected: true,
-      userWallet: '0x4F7c...7B9A',
+      userWallet: walletAddress,
       showConnectModal: false,
     }));
   }, []);
@@ -129,6 +132,26 @@ export function AppStateProvider({
       ),
     }));
   }, []);
+
+  useEffect(() => {
+    setState((prev) => {
+      const nextIsConnected = Boolean(address && isConnected);
+      const nextWallet = address ?? null;
+
+      if (
+        prev.isWalletConnected === nextIsConnected &&
+        prev.userWallet === nextWallet
+      ) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        isWalletConnected: nextIsConnected,
+        userWallet: nextWallet,
+      };
+    });
+  }, [address, isConnected]);
 
   const value = useMemo<AppStateContextValue>(
     () => ({

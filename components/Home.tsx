@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Wallet,
+  // Wallet,
   Plus,
   Clock,
   Award,
@@ -18,13 +18,15 @@ import { Card, CardContent } from './ui/card';
 import { MobileBottomSection, MOBILE_BOTTOM_SECTION_PADDING } from './MobileBottomSection';
 import { useAppState } from '@/components/app-state';
 import PageMainWrapper from './PageMainWrapper';
+import WalletConnector from './base/WalletConnector';
 
 type CurationType = 'newest' | 'popular' | 'high-reward' | 'few-answers';
 
 export function Home() {
   const router = useRouter();
-  const { bounties, isWalletConnected, userWallet, openConnectModal } =
-    useAppState();
+  
+  const { bounties, connectWallet } = useAppState();
+
   const [activeTab, setActiveTab] = useState<CurationType>('newest');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -75,15 +77,12 @@ export function Home() {
               </div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Solve3</h1>
             </div>
-
-            <Button
+            
+            <WalletConnector onConnect={connectWallet}/>
+            {/* <Button
               variant="ghost"
               size="sm"
-              onClick={() => {
-                if (!isWalletConnected) {
-                  openConnectModal();
-                }
-              }}
+              onClick={openConnectModal}
               className="flex items-center space-x-2 px-4 py-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100/70 transition-all min-h-[44px]"
             >
               <Wallet className="h-5 w-5 text-emerald-600" />
@@ -94,7 +93,7 @@ export function Home() {
               ) : (
                 <span className="font-medium text-emerald-700">Connect</span>
               )}
-            </Button>
+            </Button> */}
           </div>
         </div>
 

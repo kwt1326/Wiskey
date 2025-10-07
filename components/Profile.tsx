@@ -102,18 +102,23 @@ export function Profile() {
           ) : (
             <>
               {/* Wallet Info Card */}
-              <Card className="bg-white/90 backdrop-blur-sm border border-emerald-200/50 shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-4">
-                    <div className={`w-16 h-16 ${generateAvatar(userWallet || '')} rounded-2xl flex items-center justify-center`}>
-                      <div className="w-8 h-8 bg-white/30 rounded-xl"></div>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-slate-900 mb-1">My Wallet</h3>
-                      <div className="flex items-center space-x-3">
-                        <span className="text-slate-600 font-mono">{userWallet}</span>
-                        <Button
-                          variant="ghost"
+                <Card className="bg-white/90 backdrop-blur-sm border border-emerald-200/50 shadow-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-4">
+                      <div className={`w-16 h-16 ${generateAvatar(userWallet || '')} rounded-2xl flex items-center justify-center`}>
+                        <div className="w-8 h-8 bg-white/30 rounded-xl"></div>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-slate-900 mb-1">My Wallet</h3>
+                        <div className="flex items-center space-x-3">
+                          <span className="text-slate-600 font-mono" style={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            display: 'inline-block',
+                            maxWidth: '200px'
+                          }}>{userWallet}</span>
+                          <Button
+                            variant="ghost"
                           size="sm"
                           onClick={copyAddress}
                           className="p-2 hover:bg-emerald-100 rounded-xl"
