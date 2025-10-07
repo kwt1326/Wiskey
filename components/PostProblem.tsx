@@ -1,24 +1,28 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, Award, Lock, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from './ui/alert-dialog';
-import { toast } from 'sonner';
-import type { Bounty, Screen } from '@/components/types';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from './ui/alert-dialog';
+import { MOBILE_BOTTOM_SECTION_PADDING } from './MobileBottomSection';
+import { useAppState } from '@/components/app-state';
+import type { Bounty } from '@/components/types';
 
-interface PostProblemProps {
-  isWalletConnected: boolean;
-  userWallet: string | null;
-  onNavigate: (screen: Screen, bountyId?: string) => void;
-  onAddBounty: (bounty: Omit<Bounty, 'id' | 'createdAt' | 'answers'>) => void;
-}
-
-export function PostProblem({ isWalletConnected, userWallet, onNavigate, onAddBounty }: PostProblemProps) {
+export function PostProblem() {
+  const router = useRouter();
+  const { isWalletConnected, userWallet, addBounty } = useAppState();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [reward, setReward] = useState('');
@@ -37,7 +41,7 @@ export function PostProblem({ isWalletConnected, userWallet, onNavigate, onAddBo
     // Calculate time left (7 days from now)
     const timeLeft = '7d 0h';
 
-    const newBounty = {
+    const newBounty: Omit<Bounty, 'id' | 'createdAt' | 'answers'> = {
       title: title.trim(),
       description: description.trim(),
       reward: parseFloat(reward),
@@ -46,9 +50,7 @@ export function PostProblem({ isWalletConnected, userWallet, onNavigate, onAddBo
       postedBy: userWallet!
     };
 
-    onAddBounty(newBounty);
-    
-    const bountyId = Date.now().toString();
+    const bountyId = addBounty(newBounty);
     setCreatedBountyId(bountyId);
     setIsCreating(false);
     setShowSuccessModal(true);
@@ -62,23 +64,23 @@ export function PostProblem({ isWalletConnected, userWallet, onNavigate, onAddBo
   const handleViewBounty = () => {
     setShowSuccessModal(false);
     if (createdBountyId) {
-      onNavigate('problem-detail', createdBountyId);
+      router.push(`/problem/${createdBountyId}`);
     } else {
-      onNavigate('home');
+      router.push('/');
     }
   };
 
   const isFormValid = title.trim() && description.trim() && reward && parseFloat(reward) > 0 && isWalletConnected;
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+    <div className="flex flex-1 flex-col min-h-0 w-full">
       {/* Header */}
       <div className="bg-white/90 backdrop-blur-sm border-b border-emerald-200/50 px-5 py-4 sticky top-0 z-40">
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onNavigate('home')}
+            onClick={() => router.push('/')}
             className="p-3 hover:bg-emerald-100 rounded-2xl min-h-[44px] min-w-[44px]"
           >
             <ArrowLeft className="h-6 w-6 text-emerald-600" />
@@ -87,7 +89,7 @@ export function PostProblem({ isWalletConnected, userWallet, onNavigate, onAddBo
         </div>
       </div>
 
-      <div className="flex-1 px-5 py-6 space-y-6 overflow-y-auto">
+      <div className="flex-1 px-5 py-6 space-y-6 overflow-y-auto min-h-0" style={{ maxHeight: 'calc(100vh - 77px)' }}>
         {/* Wallet Connection Check */}
         {!isWalletConnected && (
           <Card className="bg-yellow-50 border border-yellow-200">
@@ -220,7 +222,7 @@ export function PostProblem({ isWalletConnected, userWallet, onNavigate, onAddBo
               variant="outline"
               onClick={() => {
                 setShowSuccessModal(false);
-                onNavigate('home');
+                router.push('/');
               }}
               className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl"
             >

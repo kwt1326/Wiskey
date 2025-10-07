@@ -1,10 +1,3 @@
-export type Screen =
-  | "home"
-  | "problem-detail"
-  | "post-problem"
-  | "my-bounties"
-  | "profile";
-
 export interface Answer {
   id: string;
   content: string;
@@ -26,8 +19,6 @@ export interface Bounty {
 }
 
 export interface AppState {
-  currentScreen: Screen;
-  selectedBountyId: string | null;
   isWalletConnected: boolean;
   userWallet: string | null;
   bounties: Bounty[];

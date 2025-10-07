@@ -1,34 +1,40 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, Award, Clock, User, CheckCircle, Lock } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
+import { MOBILE_BOTTOM_SECTION_PADDING } from './MobileBottomSection';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './ui/alert-dialog';
 import { toast } from 'sonner';
-import type { Bounty, Screen } from '@/components/types';
+import { useAppState } from '@/components/app-state';
 
 interface ProblemDetailProps {
   bountyId: string;
-  bounties: Bounty[];
-  isWalletConnected: boolean;
-  userWallet: string | null;
-  onNavigate: (screen: Screen) => void;
-  onAddAnswer: (bountyId: string, content: string) => void;
-  onSelectWinner: (bountyId: string, answerId: string) => void;
 }
 
-export function ProblemDetail({ 
-  bountyId, 
-  bounties, 
-  isWalletConnected, 
-  userWallet, 
-  onNavigate, 
-  onAddAnswer, 
-  onSelectWinner 
-}: ProblemDetailProps) {
+export function ProblemDetail({ bountyId }: ProblemDetailProps) {
+  const router = useRouter();
+  const {
+    bounties,
+    isWalletConnected,
+    userWallet,
+    addAnswer,
+    selectWinner,
+  } = useAppState();
   const [answerContent, setAnswerContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -54,7 +60,7 @@ export function ProblemDetail({
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    onAddAnswer(bountyId, answerContent);
+    addAnswer(bountyId, answerContent);
     setAnswerContent('');
     setIsSubmitting(false);
     
@@ -62,9 +68,9 @@ export function ProblemDetail({
   };
 
   const handleSelectWinner = (answerId: string) => {
-    onSelectWinner(bountyId, answerId);
+    selectWinner(bountyId, answerId);
     toast.success('Reward sent 🎉');
-    setTimeout(() => onNavigate('home'), 2000);
+    setTimeout(() => router.push('/'), 2000);
   };
 
   const formatTimestamp = (date: Date) => {
@@ -78,14 +84,14 @@ export function ProblemDetail({
   };
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+    <div className="flex flex-1 flex-col min-h-0 w-full">
       {/* Header */}
       <div className="bg-white/90 backdrop-blur-sm border-b border-emerald-200/50 px-5 py-4 sticky top-0 z-40">
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onNavigate('home')}
+            onClick={() => router.push('/')}
             className="p-3 hover:bg-emerald-100 rounded-2xl min-h-[44px] min-w-[44px]"
           >
             <ArrowLeft className="h-6 w-6 text-emerald-600" />
@@ -94,7 +100,7 @@ export function ProblemDetail({
         </div>
       </div>
 
-      <div className="flex-1 px-5 py-6 space-y-6 overflow-y-auto">
+      <div className="flex-1 px-5 py-6 space-y-6 overflow-y-auto min-h-0" style={{ maxHeight: 'calc(100vh - 77px)' }}>
         {/* Completion Banner */}
         {isCompleted && (
           <div className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-5 rounded-2xl flex items-center space-x-4">

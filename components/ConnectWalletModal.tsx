@@ -3,7 +3,6 @@
 import React from 'react';
 import { Wallet, Shield, Zap } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
-import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { toast } from 'sonner';
 
@@ -59,7 +58,7 @@ export function ConnectWalletModal({ isOpen, onClose, onConnect }: ConnectWallet
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-sm mx-auto bg-white rounded-3xl p-6">
+      <DialogContent className="overflow-y-auto max-w-sm mx-auto bg-white rounded-3xl p-6" style={{ height: 'calc(100vh - 200px)' }}>
         <DialogHeader>
           <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl flex items-center justify-center mx-auto mb-6">
             <Wallet className="h-10 w-10 text-white" />
