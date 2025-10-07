@@ -16,7 +16,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from './ui/alert-dialog';
-import { MOBILE_BOTTOM_SECTION_PADDING } from './MobileBottomSection';
 import { useAppState } from '@/components/app-state';
 import type { Bounty } from '@/components/types';
 

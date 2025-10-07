@@ -7,7 +7,6 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
-import { MOBILE_BOTTOM_SECTION_PADDING } from './MobileBottomSection';
 import {
   AlertDialog,
   AlertDialogAction,
