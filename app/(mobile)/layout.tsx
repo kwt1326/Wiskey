@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 
-import { AppStateProvider } from '@/components/app-state';
+import { AppStateProvider } from '@/components/appState';
 import { Toaster } from '@/components/ui/sonner';
 
 export default function MobileLayout({ children }: { children: ReactNode }) {

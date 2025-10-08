@@ -16,7 +16,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card, CardContent } from './ui/card';
 import { MobileBottomSection, MOBILE_BOTTOM_SECTION_PADDING } from './MobileBottomSection';
-import { useAppState } from '@/components/app-state';
+import { useAppState } from '@/components/appState';
 import PageMainWrapper from './PageMainWrapper';
 import WalletConnector from './base/WalletConnector';
 

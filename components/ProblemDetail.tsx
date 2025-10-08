@@ -17,9 +17,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from './ui/alert-dialog';
+} from './ui/alertDialog';
 import { toast } from 'sonner';
-import { useAppState } from '@/components/app-state';
+import { useAppState } from '@/components/appState';
 
 interface ProblemDetailProps {
   bountyId: string;

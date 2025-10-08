@@ -14,7 +14,7 @@ import {
   Award,
   TrendingUp,
 } from 'lucide-react';
-import { useAppState } from '@/components/app-state';
+import { useAppState } from '@/components/appState';
 import { toast } from 'sonner';
 import PageMainWrapper from './PageMainWrapper';
 

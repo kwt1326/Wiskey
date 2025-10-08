@@ -15,8 +15,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from './ui/alert-dialog';
-import { useAppState } from '@/components/app-state';
+} from './ui/alertDialog';
+import { useAppState } from '@/components/appState';
 import type { Bounty } from '@/components/types';
 
 export function PostProblem() {

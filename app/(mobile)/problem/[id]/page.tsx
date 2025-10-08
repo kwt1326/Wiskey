@@ -1,11 +1,12 @@
 import { ProblemDetail } from '@/components/ProblemDetail';
 
 interface ProblemDetailPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export default function ProblemDetailPage({
+export default async function ProblemDetailPage({
   params,
 }: ProblemDetailPageProps) {
-  return <ProblemDetail bountyId={params.id} />;
+  const { id } = await params;
+  return <ProblemDetail bountyId={id} />;
 }

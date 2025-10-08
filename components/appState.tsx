@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react';
 
-import { mockBounties } from '@/components/mock-data';
+import { mockBounties } from '@/components/mockData';
 import type { AppState, Bounty } from '@/components/types';
 import { useAccount } from 'wagmi';
 

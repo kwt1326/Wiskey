@@ -8,7 +8,7 @@ import { Badge } from './ui/badge';
 import { Card, CardContent } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { MobileBottomSection } from './MobileBottomSection';
-import { useAppState } from '@/components/app-state';
+import { useAppState } from '@/components/appState';
 import type { Bounty } from '@/components/types';
 import PageMainWrapper from './PageMainWrapper';
 
