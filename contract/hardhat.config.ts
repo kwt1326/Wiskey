@@ -5,6 +5,12 @@ const config = {
   plugins: [
     hardhatToolboxMochaEthersPlugin,
   ],
+  paths: {
+    sources: "./src",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts",
+  },
   solidity: {
     profiles: {
       default: {
@@ -30,17 +36,12 @@ const config = {
       type: "edr-simulated",
       chainType: "op",
     },
-    sepolia: {
+    baseSepolia: {
       type: "http",
       chainType: "l1",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+      url: configVariable("BASE_SEPOLIA_RPC"),
+      accounts: [configVariable("EVM_PRIVATE_KEY")],
     },
-  },
-  verify: {
-    etherscan: {
-      apiKey: "YOUR_ETHERSCAN_API_KEY",
-    }
   }
 };
 

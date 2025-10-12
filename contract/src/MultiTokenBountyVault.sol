@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
- * @title MultiTokenBountyVault
+ * @title MultiTokenBountyVault (OpenZeppelin v5 Compatible)
  * @notice ETH 및 ERC20(USDC, BNB 등)을 바운티별로 예치하고 동적 비율로 분배하는 컨트랙트
  */
 contract MultiTokenBountyVault is ReentrancyGuard, Ownable {
@@ -14,7 +14,7 @@ contract MultiTokenBountyVault is ReentrancyGuard, Ownable {
 
     struct Bounty {
         TokenType tokenType;
-        address tokenAddress;   // ERC20 주소 (ETH는 address(0))
+        address tokenAddress;
         uint256 totalAmount;
         address depositor;
         address solver;
@@ -24,7 +24,7 @@ contract MultiTokenBountyVault is ReentrancyGuard, Ownable {
     }
 
     mapping(uint256 => Bounty) public bounties;
-    address public operator; // 운영자 지갑
+    address public operator;
 
     event Deposited(
         uint256 indexed bountyId,
@@ -43,7 +43,10 @@ contract MultiTokenBountyVault is ReentrancyGuard, Ownable {
         uint256 operatorAmount
     );
 
-    constructor(address _operator) {
+    /**
+     * @dev Ownable v5 생성자 방식 반영
+     */
+    constructor(address _operator, address _initialOwner) Ownable(_initialOwner) {
         require(_operator != address(0), "Invalid operator");
         operator = _operator;
     }
@@ -89,7 +92,8 @@ contract MultiTokenBountyVault is ReentrancyGuard, Ownable {
         require(bounties[bountyId].totalAmount == 0, "Already deposited");
         require(solverShare + operatorShare == 100, "Invalid ratio");
 
-        IERC20(token).transferFrom(msg.sender, address(this), amount);
+        bool ok = IERC20(token).transferFrom(msg.sender, address(this), amount);
+        require(ok, "Token transfer failed");
 
         bounties[bountyId] = Bounty({
             tokenType: TokenType.ERC20,
@@ -126,8 +130,9 @@ contract MultiTokenBountyVault is ReentrancyGuard, Ownable {
             require(s1 && s2, "ETH transfer failed");
         } else {
             IERC20 token = IERC20(bounty.tokenAddress);
-            require(token.transfer(solver, solverAmount), "Solver transfer failed");
-            require(token.transfer(operator, operatorAmount), "Operator transfer failed");
+            bool s1 = token.transfer(solver, solverAmount);
+            bool s2 = token.transfer(operator, operatorAmount);
+            require(s1 && s2, "Token transfer failed");
         }
 
         emit Distributed(bountyId, solver, solverAmount, operatorAmount);

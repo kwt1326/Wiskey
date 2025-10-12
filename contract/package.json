@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "deploy-sepolia": "npx hardhat ignition deploy --network sepolia",
+    "deploy:local": "npx hardhat ignition deploy --network localhost --parameters module-parameters.json",
+    "deploy:baseSepolia": "npx hardhat ignition deploy --network baseSepolia --parameters module-parameters.json",
     "build": "hardhat build"
   },
   "devDependencies": {
