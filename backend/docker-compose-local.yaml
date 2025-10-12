@@ -1,0 +1,40 @@
+# local environment
+version: '3.8'
+
+services:
+  # app:
+  #   build:
+  #     context: .
+  #     args:
+  #       - ARG_APP_NAME=solve-api-app
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     - DB_HOST=localhost
+  #     - DB_PORT=5432
+  #     - DB_USERNAME=postgres
+  #     - DB_PASSWORD=password
+  #     - DB_NAME=solve
+  #     - NODE_ENV=development
+  #   networks:
+  #     - backend
+
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+
+volumes:
+  postgres-data:
+
+networks:
+  backend:
+    driver: bridge
