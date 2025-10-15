@@ -5,6 +5,7 @@ import { Bounty } from './bounty.entity';
 import { UserService } from '../user/user.service';
 import { CreateBountyDto } from './dto/create-bounty.dto';
 import { BountySummaryDto } from './dto/bounty-summary.dto';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class BountyService {
@@ -15,11 +16,7 @@ export class BountyService {
   ) {}
 
   /** 바운티 생성 */
-  async create(dto: CreateBountyDto) {
-    const user = await this.userService.findOrCreate({
-      walletAddress: dto.walletAddress,
-    });
-
+  async create(dto: CreateBountyDto, user: User) {
     const bounty = this.bountyRepository.create({
       title: dto.title,
       content: dto.content,

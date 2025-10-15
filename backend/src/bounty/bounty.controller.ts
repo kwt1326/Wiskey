@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Get, Query, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, Param, Req } from '@nestjs/common';
 import { BountyService } from './bounty.service';
 import { CreateBountyDto } from './dto/create-bounty.dto';
 import { ApiTags, ApiQuery } from '@nestjs/swagger';
+import type { AuthenticatedRequest } from '../common/types';
 
 @ApiTags('Bounties')
 @Controller('bounties')
@@ -9,8 +10,8 @@ export class BountyController {
   constructor(private readonly bountyService: BountyService) {}
 
   @Post()
-  async create(@Body() dto: CreateBountyDto) {
-    return this.bountyService.create(dto);
+  async create(@Body() dto: CreateBountyDto, @Req() req: AuthenticatedRequest) {
+    return this.bountyService.create(dto, req.user);
   }
 
   @ApiQuery({
@@ -31,12 +32,12 @@ export class BountyController {
   }
 
   @Get('mine/list')
-  async myBounties(@Query('wallet') wallet: string) {
-    return this.bountyService.getMyBounties(wallet);
+  async myBounties(@Req() req: AuthenticatedRequest) {
+    return this.bountyService.getMyBounties(req.user.walletAddress);
   }
 
   @Get('answered/list')
-  async answeredBounties(@Query('wallet') wallet: string) {
-    return this.bountyService.getAnsweredBounties(wallet);
+  async answeredBounties(@Req() req: AuthenticatedRequest) {
+    return this.bountyService.getAnsweredBounties(req.user.walletAddress);
   }
 }

@@ -5,6 +5,3 @@ export { apiClient } from './api-client';
 
 // Types
 export type * from './types/api';
-
-// React Query Provider
-export { ReactQueryProvider } from './react-query';

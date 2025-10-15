@@ -1,6 +1,7 @@
-import { Controller, Post, Body, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import type { AuthenticatedRequest } from '../common/types';
 
 @Controller('user')
 export class UserController {
@@ -12,7 +13,7 @@ export class UserController {
   }
 
   @Get('me')
-  getMyInfo(@Query('wallet') wallet: string) {
-    return this.userService.getProfile(wallet);
+  getMyInfo(@Req() req: AuthenticatedRequest) {
+    return this.userService.getProfile(req.user.walletAddress);
   }
 }

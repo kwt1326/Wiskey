@@ -15,7 +15,4 @@ export class CreateBountyDto {
 
   @IsNumber()
   rewardEth: number;
-
-  @IsString()
-  walletAddress: string; // 작성자
 }

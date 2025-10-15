@@ -5,6 +5,7 @@ import { Answer } from './answer.entity';
 import { CreateAnswerDto } from './dto/create-answer.dto';
 import { UserService } from '../user/user.service';
 import { Bounty } from '../bounty/bounty.entity';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class AnswerService {
@@ -16,10 +17,7 @@ export class AnswerService {
     private readonly userService: UserService,
   ) {}
 
-  async create(dto: CreateAnswerDto) {
-    const user = await this.userService.findOrCreate({
-      walletAddress: dto.walletAddress,
-    });
+  async create(dto: CreateAnswerDto, user: User) {
     const bounty = await this.bountyRepository.findOneBy({ id: dto.bountyId });
 
     if (!bounty) throw new Error('Bounty not found');

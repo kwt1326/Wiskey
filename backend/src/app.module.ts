@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { BountyModule } from './bounty/bounty.module';
 import { AnswerModule } from './answer/answer.module';
 import { BountyWinnerModule } from './bounty-winner/bounty-winner.module';
+import { WalletAuthMiddleware } from './common/wallet.middleware';
 
 @Module({
   imports: [
@@ -23,4 +24,8 @@ import { BountyWinnerModule } from './bounty-winner/bounty-winner.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(WalletAuthMiddleware).forRoutes('*');
+  }
+}
