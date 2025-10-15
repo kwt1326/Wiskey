@@ -32,9 +32,6 @@ async function bootstrap() {
     .setTitle('Solve API')
     .setDescription('API documentation for the Solve bounty platform')
     .setVersion('1.0')
-    .addTag('bounties', 'Operations related to bounties')
-    .addTag('users', 'Operations related to users')
-    .addTag('answers', 'Operations related to answers')
     .addBearerAuth()
     .build();
 
@@ -49,7 +46,9 @@ async function bootstrap() {
   await app.listen(port);
 
   console.log(`🚀 Solve API is running on: http://localhost:${port}/api`);
-  console.log(`📖 Swagger documentation is available at: http://localhost:${port}/api/docs`);
+  console.log(
+    `📖 Swagger documentation is available at: http://localhost:${port}/api/docs`,
+  );
 }
 
 bootstrap();

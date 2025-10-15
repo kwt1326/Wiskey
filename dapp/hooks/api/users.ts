@@ -1,11 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
+import { CreateUserDto } from '@/lib/types/api';
 
 export const USER_KEYS = {
   all: ['users'] as const,
-  profile: (walletAddress: string) => [...USER_KEYS.all, 'profile', walletAddress] as const,
-  byWallet: (walletAddress: string) => [...USER_KEYS.all, 'wallet', walletAddress] as const,
-  list: () => [...USER_KEYS.all, 'list'] as const,
+  profile: (wallet: string) => [...USER_KEYS.all, 'profile', wallet] as const,
+};
+
+export const MYPAGE_KEYS = {
+  all: ['mypage'] as const,
+  stats: (wallet: string) => [...MYPAGE_KEYS.all, 'stats', wallet] as const,
+  activities: (wallet: string) => [...MYPAGE_KEYS.all, 'activities', wallet] as const,
 };
 
 // Connect wallet (creates user if doesn't exist)
@@ -13,61 +18,37 @@ export function useConnectWallet() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: (walletAddress: string) => apiClient.connectWallet(walletAddress),
-    onSuccess: (data, walletAddress) => {
+    mutationFn: (data: CreateUserDto) => apiClient.connectWallet(data),
+    onSuccess: (data, variables) => {
       // Update the cache with the user data
-      queryClient.setQueryData(USER_KEYS.profile(walletAddress), data);
-      queryClient.setQueryData(USER_KEYS.byWallet(walletAddress), data);
+      queryClient.setQueryData(USER_KEYS.profile(variables.walletAddress), data);
     },
   });
 }
 
 // Get user profile
-export function useUserProfile(walletAddress: string | null) {
+export function useUserProfile(wallet: string | null) {
   return useQuery({
-    queryKey: USER_KEYS.profile(walletAddress || ''),
-    queryFn: () => apiClient.getUserProfile(walletAddress!),
-    enabled: !!walletAddress,
+    queryKey: USER_KEYS.profile(wallet || ''),
+    queryFn: () => apiClient.getUserProfile(wallet!),
+    enabled: !!wallet,
   });
 }
 
-// Update user profile
-export function useUpdateUserProfile() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: ({ 
-      walletAddress, 
-      data 
-    }: {
-      walletAddress: string;
-      data: {
-        displayName?: string;
-        bio?: string;
-        avatar?: string;
-      };
-    }) => apiClient.updateUserProfile(walletAddress, data),
-    onSuccess: (data, { walletAddress }) => {
-      // Update the cached user data
-      queryClient.setQueryData(USER_KEYS.profile(walletAddress), data);
-      queryClient.setQueryData(USER_KEYS.byWallet(walletAddress), data);
-    },
+// Get user stats
+export function useMyPageStats(wallet: string | null) {
+  return useQuery({
+    queryKey: MYPAGE_KEYS.stats(wallet || ''),
+    queryFn: () => apiClient.getMyPageStats(wallet!),
+    enabled: !!wallet,
   });
 }
 
-// Get user by wallet address
-export function useUserByWallet(walletAddress: string | null) {
+// Get recent activities
+export function useRecentActivities(wallet: string | null) {
   return useQuery({
-    queryKey: USER_KEYS.byWallet(walletAddress || ''),
-    queryFn: () => apiClient.getUserByWallet(walletAddress!),
-    enabled: !!walletAddress,
-  });
-}
-
-// Get all users
-export function useAllUsers() {
-  return useQuery({
-    queryKey: USER_KEYS.list(),
-    queryFn: () => apiClient.getAllUsers(),
+    queryKey: MYPAGE_KEYS.activities(wallet || ''),
+    queryFn: () => apiClient.getRecentActivities(wallet!),
+    enabled: !!wallet,
   });
 }

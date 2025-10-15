@@ -1,250 +1,134 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Bounty, BountyStatus } from './bounty.entity';
-import { CreateBountyDto } from './dto/create-bounty.dto';
-import { UpdateBountyDto } from './dto/update-bounty.dto';
+import { Bounty } from './bounty.entity';
 import { UserService } from '../user/user.service';
-
-export type SortType = 'newest' | 'popular' | 'high-reward' | 'few-answers';
+import { CreateBountyDto } from './dto/create-bounty.dto';
+import { BountySummaryDto } from './dto/bounty-summary.dto';
 
 @Injectable()
 export class BountyService {
   constructor(
     @InjectRepository(Bounty)
-    private bountyRepository: Repository<Bounty>,
-    private userService: UserService,
+    private readonly bountyRepository: Repository<Bounty>,
+    private readonly userService: UserService,
   ) {}
 
-  async create(
-    createBountyDto: CreateBountyDto,
-    walletAddress: string,
-  ): Promise<Bounty> {
-    const user = await this.userService.findOrCreate(walletAddress);
+  /** 바운티 생성 */
+  async create(dto: CreateBountyDto) {
+    const user = await this.userService.findOrCreate({
+      walletAddress: dto.walletAddress,
+    });
 
     const bounty = this.bountyRepository.create({
-      ...createBountyDto,
-      poster: user,
-      expiresAt: createBountyDto.expiresAt
-        ? new Date(createBountyDto.expiresAt)
-        : undefined,
-    });
-
-    const savedBounty = await this.bountyRepository.save(bounty);
-
-    // Update user stats
-    await this.userService.updateStats(user.id, { totalBountiesPosted: 1 });
-
-    return this.findOne(savedBounty.id);
-  }
-
-  async findAll(
-    sortBy: SortType = 'newest',
-    status?: BountyStatus,
-    page: number = 1,
-    limit: number = 20,
-  ): Promise<{ bounties: Bounty[]; total: number }> {
-    const queryBuilder = this.bountyRepository
-      .createQueryBuilder('bounty')
-      .leftJoinAndSelect('bounty.poster', 'poster')
-      .leftJoinAndSelect('bounty.answers', 'answers')
-      .leftJoinAndSelect('answers.responder', 'responder')
-      .leftJoinAndSelect('bounty.winningAnswer', 'winningAnswer');
-
-    if (status) {
-      queryBuilder.where('bounty.status = :status', { status });
-    }
-
-    // Apply sorting
-    switch (sortBy) {
-      case 'newest':
-        queryBuilder.orderBy('bounty.createdAt', 'DESC');
-        break;
-      case 'popular':
-        queryBuilder
-          .addSelect('COUNT(answers.id)', 'answerCount')
-          .groupBy('bounty.id')
-          .addGroupBy('poster.id')
-          .addGroupBy('answers.id')
-          .addGroupBy('responder.id')
-          .addGroupBy('winningAnswer.id')
-          .orderBy('answerCount', 'DESC')
-          .addOrderBy('bounty.createdAt', 'DESC');
-        break;
-      case 'high-reward':
-        queryBuilder.orderBy('bounty.reward', 'DESC');
-        break;
-      case 'few-answers':
-        queryBuilder
-          .addSelect('COUNT(answers.id)', 'answerCount')
-          .groupBy('bounty.id')
-          .addGroupBy('poster.id')
-          .addGroupBy('answers.id')
-          .addGroupBy('responder.id')
-          .addGroupBy('winningAnswer.id')
-          .orderBy('answerCount', 'ASC')
-          .addOrderBy('bounty.createdAt', 'DESC');
-        break;
-    }
-
-    const [bounties, total] = await queryBuilder
-      .skip((page - 1) * limit)
-      .take(limit)
-      .getManyAndCount();
-
-    return { bounties, total };
-  }
-
-  async findOne(id: string): Promise<Bounty> {
-    const bounty = await this.bountyRepository.findOne({
-      where: { id },
-      relations: ['poster', 'answers', 'answers.responder', 'winningAnswer'],
-    });
-
-    if (!bounty) {
-      throw new NotFoundException('Bounty not found');
-    }
-
-    // Increment view count
-    await this.bountyRepository.update(id, { viewCount: bounty.viewCount + 1 });
-    bounty.viewCount += 1;
-
-    return bounty;
-  }
-
-  async findByUser(walletAddress: string): Promise<Bounty[]> {
-    const user = await this.userService.findByWalletAddress(walletAddress);
-
-    return this.bountyRepository.find({
-      where: { poster: user },
-      relations: ['poster', 'answers', 'answers.responder', 'winningAnswer'],
-      order: { createdAt: 'DESC' },
-    });
-  }
-
-  async findAnsweredByUser(walletAddress: string): Promise<Bounty[]> {
-    const user = await this.userService.findByWalletAddress(walletAddress);
-
-    return this.bountyRepository
-      .createQueryBuilder('bounty')
-      .leftJoinAndSelect('bounty.poster', 'poster')
-      .leftJoinAndSelect('bounty.answers', 'answers')
-      .leftJoinAndSelect('answers.responder', 'responder')
-      .leftJoinAndSelect('bounty.winningAnswer', 'winningAnswer')
-      .where('answers.responderId = :userId', { userId: user.id })
-      .orderBy('bounty.createdAt', 'DESC')
-      .getMany();
-  }
-
-  async update(
-    id: string,
-    updateBountyDto: UpdateBountyDto,
-    walletAddress: string,
-  ): Promise<Bounty> {
-    const bounty = await this.findOne(id);
-    const user = await this.userService.findByWalletAddress(walletAddress);
-
-    if (bounty.poster.id !== user.id) {
-      throw new ForbiddenException('You can only update your own bounties');
-    }
-
-    if (bounty.status === BountyStatus.COMPLETED) {
-      throw new BadRequestException('Cannot update completed bounties');
-    }
-
-    Object.assign(bounty, {
-      ...updateBountyDto,
-      expiresAt: updateBountyDto.expiresAt
-        ? new Date(updateBountyDto.expiresAt)
-        : bounty.expiresAt,
+      title: dto.title,
+      content: dto.content,
+      rewardEth: dto.rewardEth.toString(),
+      rewardTxHash: dto.rewardTxHash, // 프론트가 전달
+      vaultBountyId: dto.vaultBountyId, // 프론트가 Vault에서 받은 bountyId
+      creator: user,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     });
 
     return this.bountyRepository.save(bounty);
   }
 
-  async remove(id: string, walletAddress: string): Promise<void> {
-    const bounty = await this.findOne(id);
-    const user = await this.userService.findByWalletAddress(walletAddress);
+  /** 바운티 목록 (필터) */
+  async list(sort: 'latest' | 'views' | 'reward' | 'answers') {
+    const qb = this.bountyRepository
+      .createQueryBuilder('b')
+      .leftJoin('b.answers', 'a')
+      .leftJoin('b.creator', 'creator')
+      .loadRelationCountAndMap('b.answerCount', 'b.answers')
+      .loadRelationCountAndMap('b.winnerCount', 'b.winner')
+      .addSelect('COALESCE(SUM(b.rewardEth), 0)', 'totalRewardEth')
+      .groupBy('b.id');
 
-    if (bounty.poster.id !== user.id) {
-      throw new ForbiddenException('You can only delete your own bounties');
-    }
+    if (sort === 'latest') qb.orderBy('b.createdAt', 'DESC');
+    else if (sort === 'views') qb.orderBy('b.views', 'DESC');
+    else if (sort === 'reward') qb.orderBy('b.rewardEth', 'DESC');
+    else if (sort === 'answers') qb.orderBy('b.answerCount', 'ASC');
 
-    if (bounty.answers.length > 0) {
-      throw new BadRequestException('Cannot delete bounties with answers');
-    }
-
-    await this.bountyRepository.remove(bounty);
+    const results = await qb.getMany();
+    return results.map((b) => this.toSummaryDto(b));
   }
 
-  async selectWinner(
-    bountyId: string,
-    answerId: string,
-    walletAddress: string,
-  ): Promise<Bounty> {
-    const bounty = await this.findOne(bountyId);
-    const user = await this.userService.findByWalletAddress(walletAddress);
-
-    if (bounty.poster.id !== user.id) {
-      throw new ForbiddenException(
-        'Only the bounty poster can select a winner',
-      );
-    }
-
-    if (bounty.status !== BountyStatus.OPEN) {
-      throw new BadRequestException('Bounty is not open');
-    }
-
-    const answer = bounty.answers.find((a) => a.id === answerId);
-    if (!answer) {
-      throw new NotFoundException('Answer not found for this bounty');
-    }
-
-    // Update bounty
-    bounty.status = BountyStatus.COMPLETED;
-
-    if (bounty.winningAnswer) {
-      bounty.winningAnswer.id = answerId;
-    }
-
-    // Update answer
-    answer.isWinner = true;
-
-    await this.bountyRepository.save(bounty);
-
-    // Update winner's stats
-    await this.userService.updateStats(answer.responder.id, {
-      totalRewardsEarned: bounty.reward,
-      totalWinningAnswers: 1,
+  /** 바운티 상세 (조회수 증가 포함) */
+  async getDetail(id: number) {
+    const bounty = await this.bountyRepository.findOne({
+      where: { id },
+      relations: ['creator', 'answers', 'answers.author'],
     });
 
-    return this.findOne(bountyId);
+    if (!bounty) throw new Error('Bounty not found');
+
+    // 조회수 증가
+    bounty.views += 1;
+    await this.bountyRepository.save(bounty);
+
+    return {
+      ...bounty,
+      remainingTime: this.calculateRemaining(bounty.expiresAt),
+    };
   }
 
-  async searchBounties(
-    query: string,
-    page: number = 1,
-    limit: number = 20,
-  ): Promise<{ bounties: Bounty[]; total: number }> {
-    const [bounties, total] = await this.bountyRepository
-      .createQueryBuilder('bounty')
-      .leftJoinAndSelect('bounty.poster', 'poster')
-      .leftJoinAndSelect('bounty.answers', 'answers')
-      .leftJoinAndSelect('answers.responder', 'responder')
-      .leftJoinAndSelect('bounty.winningAnswer', 'winningAnswer')
-      .where('bounty.title ILIKE :query OR bounty.description ILIKE :query', {
-        query: `%${query}%`,
-      })
-      .orderBy('bounty.createdAt', 'DESC')
-      .skip((page - 1) * limit)
-      .take(limit)
-      .getManyAndCount();
+  /** 내가 생성한 바운티 */
+  async getMyBounties(wallet: string): Promise<BountySummaryDto[]> {
+    const user = await this.userService.findOrCreate({
+      walletAddress: wallet,
+    });
+    const bounties = await this.bountyRepository.find({
+      where: { creator: { id: user.id } },
+      relations: ['answers'],
+      order: { createdAt: 'DESC' },
+    });
 
-    return { bounties, total };
+    return bounties.map((b) => this.toSummaryDto(b));
+  }
+
+  /** 내가 답변한 바운티 */
+  async getAnsweredBounties(wallet: string): Promise<BountySummaryDto[]> {
+    await this.userService.findOrCreate({
+      walletAddress: wallet,
+    });
+
+    const qb = this.bountyRepository
+      .createQueryBuilder('b')
+      .innerJoin('b.answers', 'a')
+      .innerJoin('a.author', 'u')
+      .where('u.walletAddress = :wallet', { wallet })
+      .loadRelationCountAndMap('b.answerCount', 'b.answers')
+      .groupBy('b.id')
+      .orderBy('b.createdAt', 'DESC');
+
+    const results = await qb.getMany();
+    return results.map((b) => this.toSummaryDto(b));
+  }
+
+  /** Helper: 바운티 DTO 변환 */
+  private toSummaryDto(b: Bounty): BountySummaryDto {
+    const remainingTime = this.calculateRemaining(b.expiresAt);
+
+    return {
+      id: b.id,
+      title: b.title,
+      content: b.content,
+      rewardEth: b.rewardEth,
+      views: b.views,
+      answerCount: (b as any).answerCount ?? b.answers?.length ?? 0,
+      winnerCount: (b as any).winnerCount ?? 0,
+      totalRewardEth: b.rewardEth.toString(),
+      remainingTime,
+      createdAt: b.createdAt,
+    };
+  }
+
+  private calculateRemaining(expiresAt: Date | null): string {
+    if (!expiresAt) return '만료일 없음';
+    const diff = expiresAt.getTime() - Date.now();
+    if (diff <= 0) return '만료됨';
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(hours / 24);
+    return days > 0 ? `${days}일 남음` : `${hours}시간 남음`;
   }
 }

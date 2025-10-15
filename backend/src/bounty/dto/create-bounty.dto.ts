@@ -1,29 +1,21 @@
-import {
-  IsString,
-  IsNumber,
-  IsOptional,
-  IsArray,
-  IsDateString,
-  Min,
-} from 'class-validator';
+import { IsString, IsNumber } from 'class-validator';
 
 export class CreateBountyDto {
   @IsString()
   title: string;
 
   @IsString()
-  description: string;
+  content: string;
+
+  @IsString()
+  rewardTxHash: string;
+
+  @IsString()
+  vaultBountyId: string;
 
   @IsNumber()
-  @Min(0.001)
-  reward: number;
+  rewardEth: number;
 
-  @IsOptional()
-  @IsDateString()
-  expiresAt?: string;
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  tags?: string[];
+  @IsString()
+  walletAddress: string; // 작성자
 }

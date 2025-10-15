@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { BountyModule } from './bounty/bounty.module';
 import { AnswerModule } from './answer/answer.module';
+import { BountyWinnerModule } from './bounty-winner/bounty-winner.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AnswerModule } from './answer/answer.module';
     UserModule,
     BountyModule,
     AnswerModule,
+    BountyWinnerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

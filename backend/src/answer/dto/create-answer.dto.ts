@@ -1,9 +1,12 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsString, IsNumber } from 'class-validator';
 
 export class CreateAnswerDto {
   @IsString()
+  walletAddress: string;
+
+  @IsString()
   content: string;
 
-  @IsUUID()
-  bountyId: string;
+  @IsNumber()
+  bountyId: number;
 }

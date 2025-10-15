@@ -1,231 +1,119 @@
-// API client configuration for the backend
-import { 
-  User, 
-  Bounty, 
-  Answer, 
-  CreateBountyRequest, 
-  UpdateBountyRequest, 
-  CreateAnswerRequest, 
-  UpdateUserRequest,
-  BountyQueryParams, 
-  Bounties
+// Simple API client for the backend
+import {
+  Bounty,
+  Answer,
+  User,
+  BountyWinner,
+  MyPageStats,
+  RecentActivity,
+  CreateBountyDto,
+  CreateAnswerDto,
+  CreateUserDto,
+  SelectWinnerDto,
+  BountyListQuery,
+  WalletQuery,
 } from './types/api';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-
-export interface ApiError {
-  statusCode: number;
-  message: string;
-  error: string;
-}
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 class ApiClient {
-  private baseURL: string;
+  private baseUrl: string;
 
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl;
   }
 
-  private async makeRequest<T>(
+  private async request<T>(
     endpoint: string,
-    options: RequestInit = {},
-    walletAddress?: string
+    options: RequestInit = {}
   ): Promise<T> {
-    const url = `${this.baseURL}${endpoint}`;
-    
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    };
-
-    if (walletAddress) {
-      headers['x-wallet-address'] = walletAddress;
-    }
-
+    const url = `${this.baseUrl}${endpoint}`;
     const config: RequestInit = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
       ...options,
-      headers,
     };
 
-    try {
-      const response = await fetch(url, config);
-      
-      if (!response.ok) {
-        const errorData: ApiError = await response.json();
-        throw new Error(errorData.message || `HTTP ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error('An unknown error occurred');
+    const response = await fetch(url, config);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  }
-
-  // User endpoints
-  async connectWallet(walletAddress: string): Promise<User> {
-    return this.makeRequest<User>('/users/connect', {
-      method: 'POST',
-      body: JSON.stringify({ walletAddress }),
-    });
-  }
-
-  async getUserProfile(walletAddress: string): Promise<User> {
-    return this.makeRequest<User>('/users/profile', {
-      method: 'GET',
-    }, walletAddress);
-  }
-
-  async updateUserProfile(walletAddress: string, data: UpdateUserRequest): Promise<User> {
-    return this.makeRequest<User>('/users/profile', {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    }, walletAddress);
-  }
-
-  async getUserByWallet(walletAddress: string): Promise<User> {
-    return this.makeRequest<User>(`/users/wallet/${walletAddress}`, {
-      method: 'GET',
-    });
-  }
-
-  async getAllUsers(): Promise<User[]> {
-    return this.makeRequest<User[]>('/users', {
-      method: 'GET',
-    });
+    
+    return response.json();
   }
 
   // Bounty endpoints
-  async createBounty(walletAddress: string, data: CreateBountyRequest): Promise<Bounty> {
-    return this.makeRequest<Bounty>('/bounties', {
+  async createBounty(data: CreateBountyDto): Promise<Bounty> {
+    return this.request<Bounty>('/bounties', {
       method: 'POST',
       body: JSON.stringify(data),
-    }, walletAddress);
+    });
   }
 
-  async getAllBounties(params?: BountyQueryParams): Promise<Bounties> {
+  async listBounties(params?: BountyListQuery): Promise<Bounty[]> {
     const searchParams = new URLSearchParams();
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined) {
-          searchParams.append(key, value.toString());
-        }
-      });
-    }
+    if (params?.sort) searchParams.append('sort', params.sort);
     
-    const queryString = searchParams.toString();
-    const endpoint = queryString ? `/bounties?${queryString}` : '/bounties';
-    
-    return this.makeRequest<Bounties>(endpoint, {
-      method: 'GET',
-    });
+    const query = searchParams.toString();
+    return this.request<Bounty[]>(`/bounties${query ? `?${query}` : ''}`);
   }
 
-  async searchBounties(query: string, page?: number, limit?: number): Promise<Bounty[]> {
-    const searchParams = new URLSearchParams({ q: query });
-    if (page) searchParams.append('page', page.toString());
-    if (limit) searchParams.append('limit', limit.toString());
-    
-    return this.makeRequest<Bounty[]>(`/bounties/search?${searchParams.toString()}`, {
-      method: 'GET',
-    });
+  async getBountyDetail(id: number): Promise<Bounty> {
+    return this.request<Bounty>(`/bounties/${id}`);
   }
 
-  async getMyBounties(walletAddress: string): Promise<Bounty[]> {
-    return this.makeRequest<Bounty[]>('/bounties/my-bounties', {
-      method: 'GET',
-    }, walletAddress);
+  async getMyBounties(wallet: string): Promise<Bounty[]> {
+    return this.request<Bounty[]>(`/bounties/mine/list?wallet=${wallet}`);
   }
 
-  async getMyAnswers(walletAddress: string): Promise<Bounty[]> {
-    return this.makeRequest<Bounty[]>('/bounties/my-answers', {
-      method: 'GET',
-    }, walletAddress);
-  }
-
-  async getBountyById(id: string): Promise<Bounty> {
-    return this.makeRequest<Bounty>(`/bounties/${id}`, {
-      method: 'GET',
-    });
-  }
-
-  async updateBounty(id: string, walletAddress: string, data: UpdateBountyRequest): Promise<Bounty> {
-    return this.makeRequest<Bounty>(`/bounties/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    }, walletAddress);
-  }
-
-  async deleteBounty(id: string, walletAddress: string): Promise<void> {
-    return this.makeRequest<void>(`/bounties/${id}`, {
-      method: 'DELETE',
-    }, walletAddress);
-  }
-
-  async selectWinner(bountyId: string, walletAddress: string, answerId: string): Promise<Bounty> {
-    return this.makeRequest<Bounty>(`/bounties/${bountyId}/select-winner`, {
-      method: 'POST',
-      body: JSON.stringify({ answerId }),
-    }, walletAddress);
+  async getAnsweredBounties(wallet: string): Promise<Bounty[]> {
+    return this.request<Bounty[]>(`/bounties/answered/list?wallet=${wallet}`);
   }
 
   // Answer endpoints
-  async createAnswer(walletAddress: string, data: CreateAnswerRequest): Promise<Answer> {
-    return this.makeRequest<Answer>('/answers', {
+  async createAnswer(data: CreateAnswerDto): Promise<Answer> {
+    return this.request<Answer>('/answers', {
       method: 'POST',
       body: JSON.stringify(data),
-    }, walletAddress);
-  }
-
-  async getAllAnswers(): Promise<Answer[]> {
-    return this.makeRequest<Answer[]>('/answers', {
-      method: 'GET',
     });
   }
 
-  async getAnswersForBounty(bountyId: string): Promise<Answer[]> {
-    return this.makeRequest<Answer[]>(`/answers/bounty/${bountyId}`, {
-      method: 'GET',
+  // User endpoints
+  async connectWallet(data: CreateUserDto): Promise<User> {
+    return this.request<User>('/user/connect', {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
   }
 
-  async getUserAnswers(walletAddress: string): Promise<Answer[]> {
-    return this.makeRequest<Answer[]>('/answers/my-answers', {
-      method: 'GET',
-    }, walletAddress);
+  async getUserProfile(wallet: string): Promise<User> {
+    return this.request<User>(`/user/me?wallet=${wallet}`);
   }
 
-  async getAnswerById(id: string): Promise<Answer> {
-    return this.makeRequest<Answer>(`/answers/${id}`, {
-      method: 'GET',
+  // MyPage endpoints
+  async getMyPageStats(wallet: string): Promise<MyPageStats> {
+    return this.request<MyPageStats>(`/mypage/stats?wallet=${wallet}`);
+  }
+
+  async getRecentActivities(wallet: string): Promise<RecentActivity[]> {
+    return this.request<RecentActivity[]>(`/mypage/activities?wallet=${wallet}`);
+  }
+
+  // Winner endpoints
+  async selectWinner(data: SelectWinnerDto): Promise<BountyWinner> {
+    return this.request<BountyWinner>('/winners/select', {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
   }
 
-  async updateAnswer(id: string, walletAddress: string, content: string): Promise<Answer> {
-    return this.makeRequest<Answer>(`/answers/${id}`, {
+  async payReward(id: number): Promise<BountyWinner> {
+    return this.request<BountyWinner>(`/winners/${id}/reward`, {
       method: 'PATCH',
-      body: JSON.stringify({ content }),
-    }, walletAddress);
-  }
-
-  async deleteAnswer(id: string, walletAddress: string): Promise<void> {
-    return this.makeRequest<void>(`/answers/${id}`, {
-      method: 'DELETE',
-    }, walletAddress);
-  }
-
-  async upvoteAnswer(id: string, walletAddress: string): Promise<Answer> {
-    return this.makeRequest<Answer>(`/answers/${id}/upvote`, {
-      method: 'POST',
-    }, walletAddress);
-  }
-
-  async downvoteAnswer(id: string, walletAddress: string): Promise<Answer> {
-    return this.makeRequest<Answer>(`/answers/${id}/downvote`, {
-      method: 'POST',
-    }, walletAddress);
+    });
   }
 }
 

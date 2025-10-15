@@ -14,43 +14,28 @@ import {
   Award,
   TrendingUp,
 } from 'lucide-react';
-import { useAppState } from '@/components/appStateWithAPI';
+import { useAuth, useUserProfile, useMyPageStats, useRecentActivities } from '@/hooks';
 import { toast } from 'sonner';
 import PageMainWrapper from './PageMainWrapper';
 
 export function Profile() {
   const router = useRouter();
-  const {
-    isWalletConnected,
-    userWallet,
-    bounties,
-    openConnectModal,
-  } = useAppState();
+  const { walletAddress, isConnected } = useAuth();
+  const { data: userProfile } = useUserProfile(walletAddress);
+  const { data: stats } = useMyPageStats(walletAddress);
+  const { data: activities } = useRecentActivities(walletAddress);
   const copyAddress = () => {
-    if (userWallet) {
-      navigator.clipboard.writeText(userWallet);
+    if (walletAddress) {
+      navigator.clipboard.writeText(walletAddress);
       toast.success('Address copied!');
     }
   };
 
-  const userBounties = bounties.filter(b => b.postedBy === userWallet);
-  const userAnswers = bounties.filter(b => 
-    b.answers.some(a => a.responderWallet === userWallet)
-  );
-  const rewardsEarned = bounties
-    .flatMap(b => b.answers)
-    .filter(a => a.responderWallet === userWallet && a.isWinner)
-    .reduce((sum, a) => {
-      const bounty = bounties.find(b => b.answers.includes(a));
-      return sum + (bounty?.reward || 0);
-    }, 0);
-
-  const recentActivity = [
-    { type: 'posted', title: 'How to automate NFT minting?', status: 'Open', time: '2h ago' },
-    { type: 'answered', title: 'Best DeFi yield farming strategies?', status: 'Pending', time: '5h ago' },
-    { type: 'won', title: 'How to integrate Base network?', status: 'Won', time: '1d ago' },
-    { type: 'posted', title: 'Smart contract optimization tips?', status: 'Completed', time: '2d ago' },
-  ];
+  // Use stats data from the API instead of filtering bounties
+  const userBounties = stats?.bountyCount || 0;
+  const userAnswers = stats?.answerCount || 0;
+  const rewardsEarned = parseFloat(stats?.totalRewardEth || '0');
+  const winCount = stats?.winCount || 0;
 
   const generateAvatar = (address: string) => {
     const colors = ['bg-emerald-400', 'bg-teal-400', 'bg-green-400', 'bg-cyan-400'];

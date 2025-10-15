@@ -1,82 +1,97 @@
-// API response types based on the backend models
+// API types based on the actual backend models
 
-export interface User {
-  id: string;
-  walletAddress: string;
-  displayName?: string;
-  bio?: string;
-  avatar?: string;
-  totalRewardsEarned: number;
-  totalBountiesPosted: number;
-  totalAnswersGiven: number;
-  totalWinningAnswers: number;
-  isActive: boolean;
+// Base entity interface
+export interface BaseEntity {
+  id: number;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface Answer {
-  id: string;
+// User entity
+export interface User extends BaseEntity {
+  walletAddress: string;
+}
+
+// Bounty entity
+export interface Bounty extends BaseEntity {
+  title: string;
   content: string;
-  isWinner: boolean;
-  upvotes: number;
-  downvotes: number;
-  createdAt: string;
-  updatedAt: string;
-  responder: User;
+  rewardEth: string;
+  rewardTxHash?: string;
+  vaultBountyId?: string;
+  views: number;
+  expiresAt: string | null;
+  creator: User;
+  answers: Answer[];
+}
+
+// Answer entity
+export interface Answer extends BaseEntity {
+  content: string;
+  author: User;
   bounty: Bounty;
 }
 
-export interface Bounty {
-  id: string;
-  title: string;
-  description: string;
-  reward: number;
-  status: 'open' | 'completed' | 'cancelled';
-  expiresAt?: string;
-  viewCount: number;
-  tags?: string[];
-  createdAt: string;
-  updatedAt: string;
-  poster: User;
-  answers: Answer[];
-  winningAnswer?: Answer;
+// BountyWinner entity
+export interface BountyWinner extends BaseEntity {
+  bounty: Bounty;
+  answer: Answer;
+  rewardPaid: boolean;
+  txHash?: string;
 }
 
-export interface Bounties {
-  bounties: Bounty[];
-  total: number;
+// Activity types
+export enum ActivityType {
+  BOUNTY = 'BOUNTY',
+  ANSWER = 'ANSWER',
+  WIN = 'WIN',
 }
 
-export interface CreateBountyRequest {
-  title: string;
-  description: string;
-  reward: number;
-  expiresAt?: string;
-  tags?: string[];
-}
-
-export interface UpdateBountyRequest {
+export interface RecentActivity {
+  type: ActivityType;
   title?: string;
-  description?: string;
-  status?: 'open' | 'completed' | 'cancelled';
-  tags?: string[];
+  content?: string;
+  rewardEth?: string;
+  createdAt: string;
 }
 
-export interface CreateAnswerRequest {
+export interface MyPageStats {
+  bountyCount: number;
+  answerCount: number;
+  totalRewardEth: string;
+  winCount: number;
+}
+
+// Request DTOs
+export interface CreateBountyDto {
+  title: string;
   content: string;
-  bountyId: string;
+  rewardTxHash: string;
+  vaultBountyId: string;
+  rewardEth: number;
+  walletAddress: string;
 }
 
-export interface UpdateUserRequest {
-  displayName?: string;
-  bio?: string;
-  avatar?: string;
+export interface CreateAnswerDto {
+  walletAddress: string;
+  content: string;
+  bountyId: number;
 }
 
-export interface BountyQueryParams {
-  sortBy?: 'newest' | 'popular' | 'high-reward' | 'few-answers';
-  status?: 'open' | 'completed' | 'cancelled';
-  page?: number;
-  limit?: number;
+export interface CreateUserDto {
+  walletAddress: string;
+}
+
+export interface SelectWinnerDto {
+  bountyId: number;
+  answerId: number;
+}
+
+// Query parameters
+export interface BountyListQuery {
+  sort?: 'latest' | 'views' | 'reward' | 'answers';
+}
+
+export interface WalletQuery {
+  wallet: string;
 }

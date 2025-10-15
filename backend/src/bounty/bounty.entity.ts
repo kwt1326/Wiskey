@@ -1,67 +1,34 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Answer } from '../answer/answer.entity';
-
-export enum BountyStatus {
-  OPEN = 'open',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-}
+import { BaseEntity } from '../common/base.entity';
 
 @Entity('bounties')
-export class Bounty {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column()
+export class Bounty extends BaseEntity {
+  @Column({ name: 'title' })
   title: string;
 
-  @Column('text')
-  description: string;
+  @Column({ name: 'content', type: 'text' })
+  content: string;
 
-  @Column('decimal', { precision: 18, scale: 8 })
-  reward: number;
+  @Column({ name: 'reward_eth', type: 'decimal', precision: 18, scale: 8 })
+  rewardEth: string;
 
-  @Column({
-    type: 'enum',
-    enum: BountyStatus,
-    default: BountyStatus.OPEN,
-  })
-  status: BountyStatus;
+  @Column({ name: 'reward_tx_hash', nullable: true })
+  rewardTxHash?: string; // 프론트에서 전달받은 예치 트랜잭션 해시
 
-  @Column({ type: 'timestamp', nullable: true })
-  expiresAt?: Date;
+  @Column({ name: 'vault_bounty_id', nullable: true })
+  vaultBountyId?: string; // 컨트랙트 상의 바운티 ID (distribute 시 필요)
 
-  @Column({ default: 0 })
-  viewCount: number;
+  @Column({ name: 'views', default: 0 })
+  views: number;
 
-  @Column('simple-array', { nullable: true })
-  tags?: string[];
+  @Column({ name: 'expires_at', type: 'timestamp', nullable: true })
+  expiresAt: Date | null;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @ManyToOne(() => User, (user) => user.bounties, { eager: true })
+  creator: User;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  // Relations
-  @ManyToOne(() => User, (user) => user.postedBounties)
-  @JoinColumn({ name: 'posterId' })
-  poster: User;
-
-  @OneToMany(() => Answer, (answer) => answer.bounty)
+  @OneToMany(() => Answer, (answer) => answer.bounty, { cascade: true })
   answers: Answer[];
-
-  @ManyToOne(() => Answer, { nullable: true })
-  @JoinColumn({ name: 'winningAnswerId' })
-  winningAnswer?: Answer;
 }

@@ -1,44 +1,16 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
-import { User } from '../user/user.entity';
+import { BaseEntity } from '../common/base.entity';
 import { Bounty } from '../bounty/bounty.entity';
+import { User } from '../user/user.entity';
+import { Entity, Column, ManyToOne } from 'typeorm';
 
 @Entity('answers')
-export class Answer {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column('text')
+export class Answer extends BaseEntity {
+  @Column({ name: 'content', type: 'text' })
   content: string;
 
-  @Column({ default: false })
-  isWinner: boolean;
+  @ManyToOne(() => User, (user) => user.answers, { eager: true })
+  author: User;
 
-  @Column({ default: 0 })
-  upvotes: number;
-
-  @Column({ default: 0 })
-  downvotes: number;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  // Relations
-  @ManyToOne(() => User, (user) => user.answers)
-  @JoinColumn({ name: 'responderId' })
-  responder: User;
-
-  @ManyToOne(() => Bounty, (bounty) => bounty.answers)
-  @JoinColumn({ name: 'bountyId' })
+  @ManyToOne(() => Bounty, (bounty) => bounty.answers, { onDelete: 'CASCADE' })
   bounty: Bounty;
 }
