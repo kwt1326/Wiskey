@@ -1,23 +1,17 @@
-export interface Answer {
-  id: string;
-  content: string;
-  responderWallet: string;
-  timestamp: Date;
-  isWinner?: boolean;
-}
+// Re-export API types for component use
+export type { 
+  Bounty, 
+  Answer, 
+  User, 
+  BountyWinner,
+  MyPageStats,
+  RecentActivity,
+  CreateBountyDto,
+  CreateAnswerDto,
+  SelectWinnerDto 
+} from '@/lib/types/api';
 
-export interface Bounty {
-  id: string;
-  title: string;
-  description: string;
-  reward: number;
-  status: "open" | "completed";
-  timeLeft: string;
-  postedBy: string;
-  answers: Answer[];
-  createdAt: Date;
-}
-
+// Additional component-specific types
 export interface AppState {
   isWalletConnected: boolean;
   userWallet: string | null;

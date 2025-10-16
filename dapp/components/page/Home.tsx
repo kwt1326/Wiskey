@@ -11,13 +11,14 @@ import {
   MessageSquare,
   Sparkles,
 } from 'lucide-react';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Card, CardContent } from './ui/card';
-import { MobileBottomSection, MOBILE_BOTTOM_SECTION_PADDING } from './MobileBottomSection';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Card, CardContent } from '../ui/card';
+import { MobileBottomSection, MOBILE_BOTTOM_SECTION_PADDING } from '../MobileBottomSection';
 import { useAppData } from '@/hooks/useAppData';
-import PageMainWrapper from './PageMainWrapper';
-import WalletConnector from './base/WalletConnector';
+import PageMainWrapper from '../PageMainWrapper';
+import WalletConnector from '../base/WalletConnector';
+import { BountyStatus } from '@/lib/types/api';
 
 type CurationType = 'newest' | 'popular' | 'high-reward' | 'few-answers';
 
@@ -27,7 +28,7 @@ export function Home() {
   const { auth, bounties } = useAppData();
   const [activeTab, setActiveTab] = useState<CurationType>('newest');
 
-  const getSortedBounties = (type: CurationType) => {
+  const getSortedBounties = (_: CurationType) => {
     // Since we're fetching sorted data from API, just return the data
     return bounties.data;
   };
@@ -100,7 +101,7 @@ export function Home() {
               {tabs.find(t => t.id === activeTab)?.label} Bounties
             </h2>
             <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 border-emerald-200 px-3 py-1 rounded-full">
-              {displayedBounties?.length || 0} Open
+              {displayedBounties?.filter(b => b.status === BountyStatus.OPEN).length || 0} Open
             </Badge>
           </div>
 
@@ -134,17 +135,18 @@ export function Home() {
                             {bounty.title}
                           </h3>
                           <Badge
-                            variant={bounty.status === 'open' ? 'default' : 'secondary'}
-                            className={bounty.status === 'open'
-                              ? 'bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 text-sm rounded-full'
-                              : 'bg-slate-100 text-slate-600 px-3 py-1 text-sm rounded-full'
-                            }
+                            variant="default"
+                            className={`px-3 py-1 text-sm rounded-full ${
+                              bounty.status === BountyStatus.OPEN
+                                ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                                : 'bg-gray-500 hover:bg-gray-600 text-white'
+                            }`}
                           >
-                            {bounty.status === 'open' ? 'Open' : 'Completed'}
+                            {bounty.status === BountyStatus.OPEN ? 'Open' : 'Completed'}
                           </Badge>
                         </div>
                         <p className="text-slate-600 line-clamp-2 leading-relaxed mb-4">
-                          {bounty.description}
+                          {bounty.content || bounty.description}
                         </p>
                       </div>
                     </div>
@@ -155,12 +157,12 @@ export function Home() {
                           <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center">
                             <Award className="h-3 w-3 text-amber-600" />
                           </div>
-                          <span className="font-bold text-amber-800">{bounty.reward} ETH</span>
+                          <span className="font-bold text-amber-800">{parseFloat(bounty.rewardEth || '0')} ETH</span>
                         </div>
 
                         <div className="flex items-center space-x-2 text-slate-500">
                           <Clock className="h-4 w-4" />
-                          <span className="text-sm font-medium">{bounty.expiresAt}</span>
+                          <span className="text-sm font-medium">{bounty.expiresAt ? new Date(bounty.expiresAt).toLocaleDateString() : 'No deadline'}</span>
                         </div>
                       </div>
 

@@ -16,7 +16,7 @@ export class BountyService {
   ) {}
 
   /** 바운티 생성 */
-  async create(dto: CreateBountyDto, user: User) {
+  create(dto: CreateBountyDto, user: User) {
     const bounty = this.bountyRepository.create({
       title: dto.title,
       content: dto.content,
@@ -117,6 +117,7 @@ export class BountyService {
       totalRewardEth: b.rewardEth.toString(),
       remainingTime,
       createdAt: b.createdAt,
+      status: b.status,
     };
   }
 

@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { MobileBottomSection } from './MobileBottomSection';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { MobileBottomSection } from '../MobileBottomSection';
 import {
   Settings,
   Copy,
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useAuth, useUserProfile, useMyPageStats, useRecentActivities } from '@/hooks';
 import { toast } from 'sonner';
-import PageMainWrapper from './PageMainWrapper';
+import PageMainWrapper from '../PageMainWrapper';
 
 export function Profile() {
   const router = useRouter();

@@ -3,11 +3,11 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Award, Lock, CheckCircle } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
-import { Label } from './ui/label';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
+import { Label } from '../ui/label';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -15,9 +15,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from './ui/alertDialog';
+} from '../ui/alertDialog';
 import { useAppData } from '@/hooks/useAppData';
-import { useCreateBounty } from '@/hooks';
+import { useCreateBounty } from '@/hooks/api/bounties';
 
 export function PostProblem() {
   const router = useRouter();
@@ -34,17 +34,16 @@ export function PostProblem() {
 
     try {
       const result = await createBountyMutation.mutateAsync({
-        walletAddress: auth.userWallet,
-        data: {
-          title: title.trim(),
-          description: description.trim(),
-          reward: parseFloat(reward),
-          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
-          tags: []
-        }
+        title: title.trim(),
+        content: description.trim(),
+        rewardEth: parseFloat(reward),
+        walletAddress: auth.userWallet!,
+        // These would come from blockchain integration
+        rewardTxHash: 'pending', // Would be actual tx hash
+        vaultBountyId: 'pending' // Would be actual vault ID
       });
       
-      setCreatedBountyId(result.id);
+      setCreatedBountyId(result.id.toString());
       setShowSuccessModal(true);
       
       // Reset form

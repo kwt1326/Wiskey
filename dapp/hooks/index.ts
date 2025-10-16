@@ -1,11 +1,12 @@
-// 🚀 Ergonomic hooks for the Solve3 dapp
-// Everything you need to build amazing bounty experiences
+// 🚀 Clean hooks for the Solve3 dapp
+// Simple, readable API integration
 
-// 🎯 High-level hooks (use these for most cases)
+// 🎯 Main hooks (use these for most cases)
 export { useAuth } from './useAuth';
 export { useAppData } from './useAppData';
+export { useSimpleData } from './useSimpleData';
 
-// 🔧 Specific API hooks (for advanced usage)
+// 🔧 Specific API hooks (for targeted usage)
 export * from './api/users';
 export * from './api/bounties';
 export * from './api/answers';

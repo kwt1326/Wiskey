@@ -2,6 +2,7 @@ import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Answer } from '../answer/answer.entity';
 import { BaseEntity } from '../common/base.entity';
+import { BountyStatus } from '../common/types';
 
 @Entity('bounties')
 export class Bounty extends BaseEntity {
@@ -25,6 +26,14 @@ export class Bounty extends BaseEntity {
 
   @Column({ name: 'expires_at', type: 'timestamp', nullable: true })
   expiresAt: Date | null;
+
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: BountyStatus,
+    default: BountyStatus.OPEN,
+  })
+  status: BountyStatus;
 
   @ManyToOne(() => User, (user) => user.bounties, { eager: true })
   creator: User;

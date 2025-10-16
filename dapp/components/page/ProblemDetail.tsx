@@ -3,10 +3,10 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Award, Clock, User, CheckCircle, Lock } from 'lucide-react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Textarea } from './ui/textarea';
-import { Badge } from './ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Textarea } from '../ui/textarea';
+import { Badge } from '../ui/badge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,10 +17,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from './ui/alertDialog';
+} from '../ui/alertDialog';
 import { toast } from 'sonner';
 import { useAppData } from '@/hooks/useAppData';
-import { useBountyById, useCreateAnswer, useSelectWinner } from '@/hooks';
+import { useBountyById } from '@/hooks/api/bounties';
+import { useCreateAnswer } from '@/hooks/api/answers';
+import { useSelectWinner } from '@/hooks/api/winners';
 
 interface ProblemDetailProps {
   bountyId: string;
@@ -32,7 +34,7 @@ export function ProblemDetail({ bountyId }: ProblemDetailProps) {
   const [answerContent, setAnswerContent] = useState('');
   
   // Fetch bounty details
-  const { data: bounty, isLoading: bountyLoading, error: bountyError } = useBountyById(bountyId);
+  const { data: apiBounty, isLoading: bountyLoading } = useBountyById(parseInt(bountyId));
   
   // Mutations
   const createAnswerMutation = useCreateAnswer();
@@ -49,13 +51,30 @@ export function ProblemDetail({ bountyId }: ProblemDetailProps) {
     );
   }
 
-  if (!bounty) {
+  if (!apiBounty) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
         <p className="text-slate-600">Bounty not found</p>
       </div>
     );
   }
+
+  // Transform API data
+  const bounty = {
+    ...apiBounty,
+    status: 'open' as const, // Simplified for now
+    timeLeft: apiBounty.expiresAt ? 
+      new Date(apiBounty.expiresAt).toLocaleDateString() : 'No deadline',
+    reward: parseFloat(apiBounty.rewardEth),
+    postedBy: apiBounty.creator.walletAddress,
+    description: apiBounty.content,
+    answers: apiBounty.answers?.map(answer => ({
+      ...answer,
+      responderWallet: answer.author.walletAddress,
+      timestamp: new Date(answer.createdAt),
+      isWinner: false // Would need proper logic
+    })) || []
+  };
 
   const isOwner = auth.userWallet === bounty.postedBy;
   const hasUserAnswered = bounty.answers?.some(a => a.responderWallet === auth.userWallet);
@@ -67,30 +86,29 @@ export function ProblemDetail({ bountyId }: ProblemDetailProps) {
     try {
       await createAnswerMutation.mutateAsync({
         walletAddress: auth.userWallet,
-        data: {
-          content: answerContent,
-          bountyId: bountyId
-        }
+        content: answerContent,
+        bountyId: parseInt(bountyId)
       });
       setAnswerContent('');
       toast.success('Answer submitted successfully!');
     } catch (error) {
+      console.error(error)
       toast.error('Failed to submit answer. Please try again.');
     }
   };
 
-  const handleSelectWinner = async (answerId: string) => {
+  const handleSelectWinner = async (answerId: number) => {
     if (!auth.userWallet) return;
     
     try {
       await selectWinnerMutation.mutateAsync({
-        bountyId: bountyId,
-        walletAddress: auth.userWallet,
+        bountyId: parseInt(bountyId),
         answerId: answerId
       });
       toast.success('Reward sent 🎉');
       setTimeout(() => router.push('/'), 2000);
     } catch (error) {
+      console.error(error)
       toast.error('Failed to select winner. Please try again.');
     }
   };

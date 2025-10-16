@@ -10,7 +10,7 @@ export class BountyController {
   constructor(private readonly bountyService: BountyService) {}
 
   @Post()
-  async create(@Body() dto: CreateBountyDto, @Req() req: AuthenticatedRequest) {
+  create(@Body() dto: CreateBountyDto, @Req() req: AuthenticatedRequest) {
     return this.bountyService.create(dto, req.user);
   }
 

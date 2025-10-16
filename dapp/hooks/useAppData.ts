@@ -1,7 +1,8 @@
 'use client';
 
 import { useAuth } from './useAuth';
-import { useBounties, useMyBounties, useMyAnswers } from './api/bounties';
+import { useBounties, useMyBounties, useAnsweredBounties } from './api/bounties';
+import { transformBountyForComponent } from '@/lib/utils/data-transforms';
 
 /**
  * Centralized app data hook
@@ -10,16 +11,17 @@ import { useBounties, useMyBounties, useMyAnswers } from './api/bounties';
 export function useAppData() {
   const auth = useAuth();
   
-  // Main bounties list
-  const bounties = useBounties({
-    sortBy: 'newest',
-    status: 'open',
-    limit: 20
-  });
+  // Main bounties list - simple fetch all bounties
+  const bounties = useBounties();
   
   // User-specific data (only when authenticated)
   const myBounties = useMyBounties(auth.userWallet);
-  const myAnswers = useMyAnswers(auth.userWallet);
+  const myAnswers = useAnsweredBounties(auth.userWallet);
+
+  // Transform API data for component use
+  const transformedBounties = bounties.data?.map(transformBountyForComponent) || [];
+  const transformedMyBounties = myBounties.data?.map(transformBountyForComponent) || [];
+  const transformedMyAnswers = myAnswers.data?.map(transformBountyForComponent) || [];
 
   return {
     // Authentication
@@ -27,7 +29,7 @@ export function useAppData() {
     
     // Main data
     bounties: {
-      data: bounties.data || [],
+      data: transformedBounties,
       isLoading: bounties.isLoading,
       error: bounties.error,
       refetch: bounties.refetch
@@ -35,14 +37,14 @@ export function useAppData() {
     
     // User data
     myBounties: {
-      data: myBounties.data || [],
+      data: transformedMyBounties,
       isLoading: myBounties.isLoading,
       error: myBounties.error,
       refetch: myBounties.refetch
     },
     
     myAnswers: {
-      data: myAnswers.data || [],
+      data: transformedMyAnswers,
       isLoading: myAnswers.isLoading,
       error: myAnswers.error,
       refetch: myAnswers.refetch

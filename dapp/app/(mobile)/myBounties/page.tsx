@@ -1,4 +1,4 @@
-import { MyBounties } from '@/components/MyBounties';
+import { MyBounties } from '@/components/page/MyBounties';
 
 export default function MyBountiesPage() {
   return <MyBounties />;

@@ -1,5 +1,16 @@
 // API types based on the actual backend models
 
+// Status enums
+export enum BountyStatus {
+  OPEN = 'open',
+  COMPLETED = 'completed',
+}
+
+export enum AnswerStatus {
+  PENDING = 'pending',
+  WINNER = 'winner',
+}
+
 // Base entity interface
 export interface BaseEntity {
   id: number;
@@ -21,6 +32,7 @@ export interface Bounty extends BaseEntity {
   vaultBountyId?: string;
   views: number;
   expiresAt: string | null;
+  status: BountyStatus;
   creator: User;
   answers: Answer[];
 }
@@ -28,6 +40,7 @@ export interface Bounty extends BaseEntity {
 // Answer entity
 export interface Answer extends BaseEntity {
   content: string;
+  status: AnswerStatus;
   author: User;
   bounty: Bounty;
 }

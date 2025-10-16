@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { BountyStatus } from '../../common/types';
 
 export class BountySummaryDto {
   @ApiProperty()
@@ -30,4 +31,7 @@ export class BountySummaryDto {
 
   @ApiProperty()
   createdAt: Date;
+
+  @ApiProperty({ enum: BountyStatus })
+  status: BountyStatus;
 }

@@ -2,11 +2,20 @@ import { BaseEntity } from '../common/base.entity';
 import { Bounty } from '../bounty/bounty.entity';
 import { User } from '../user/user.entity';
 import { Entity, Column, ManyToOne } from 'typeorm';
+import { AnswerStatus } from '../common/types';
 
 @Entity('answers')
 export class Answer extends BaseEntity {
   @Column({ name: 'content', type: 'text' })
   content: string;
+
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: AnswerStatus,
+    default: AnswerStatus.PENDING,
+  })
+  status: AnswerStatus;
 
   @ManyToOne(() => User, (user) => user.answers, { eager: true })
   author: User;

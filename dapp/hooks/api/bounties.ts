@@ -17,7 +17,7 @@ export function useCreateBounty() {
   
   return useMutation({
     mutationFn: (data: CreateBountyDto) => apiClient.createBounty(data),
-    onSuccess: (data, variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate bounty lists to refetch updated data
       queryClient.invalidateQueries({ queryKey: BOUNTY_KEYS.lists() });
       queryClient.invalidateQueries({ queryKey: BOUNTY_KEYS.myBounties(variables.walletAddress) });

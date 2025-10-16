@@ -1,4 +1,4 @@
-import { ProblemDetail } from '@/components/ProblemDetail';
+import { ProblemDetail } from '@/components/page/ProblemDetail';
 
 interface ProblemDetailPageProps {
   params: Promise<{ id: string }>;
