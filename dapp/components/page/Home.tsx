@@ -15,7 +15,8 @@ import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Card, CardContent } from '../ui/card';
 import { MobileBottomSection, MOBILE_BOTTOM_SECTION_PADDING } from '../MobileBottomSection';
-import { useAppData } from '@/hooks/useAppData';
+import { useAuth } from '@/hooks/useAuth';
+import { useBounties } from '@/hooks/api/bounties';
 import PageMainWrapper from '../PageMainWrapper';
 import WalletConnector from '../base/WalletConnector';
 import { BountyStatus } from '@/lib/types/api';
@@ -25,18 +26,32 @@ type CurationType = 'newest' | 'popular' | 'high-reward' | 'few-answers';
 export function Home() {
   const router = useRouter();
   
-  const { auth, bounties } = useAppData();
+  const auth = useAuth();
+  const bounties = useBounties();
   const [activeTab, setActiveTab] = useState<CurationType>('newest');
 
-  const getSortedBounties = (_: CurationType) => {
-    // Since we're fetching sorted data from API, just return the data
-    return bounties.data;
+  const getSortedBounties = (type: CurationType) => {
+    if (!bounties.data) return [];
+    
+    const openBounties = bounties.data.filter(b => b.status === BountyStatus.OPEN);
+    
+    switch (type) {
+      case 'newest':
+        return [...openBounties].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      case 'popular':
+        return [...openBounties].sort((a, b) => (b.answers?.length || 0) - (a.answers?.length || 0));
+      case 'high-reward':
+        return [...openBounties].sort((a, b) => parseFloat(b.rewardEth || '0') - parseFloat(a.rewardEth || '0'));
+      case 'few-answers':
+        return [...openBounties].sort((a, b) => (a.answers?.length || 0) - (b.answers?.length || 0));
+      default:
+        return openBounties;
+    }
   };
 
   const handleTabChange = async (tab: CurationType) => {
     if (tab === activeTab) return;
     setActiveTab(tab);
-    // The useBounties hook will automatically refetch with new sortBy parameter
   };
 
   const tabs = [
@@ -146,7 +161,7 @@ export function Home() {
                           </Badge>
                         </div>
                         <p className="text-slate-600 line-clamp-2 leading-relaxed mb-4">
-                          {bounty.content || bounty.description}
+                          {bounty.content}
                         </p>
                       </div>
                     </div>

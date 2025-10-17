@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api-client';
+import { useApiClient, useWalletState } from '@/providers/ApiClientProvider';
 import { CreateBountyDto, BountyListQuery } from '@/lib/types/api';
 
 export const BOUNTY_KEYS = {
@@ -14,19 +14,25 @@ export const BOUNTY_KEYS = {
 // Create bounty
 export function useCreateBounty() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
+  const { walletAddress } = useWalletState();
   
   return useMutation({
     mutationFn: (data: CreateBountyDto) => apiClient.createBounty(data),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       // Invalidate bounty lists to refetch updated data
       queryClient.invalidateQueries({ queryKey: BOUNTY_KEYS.lists() });
-      queryClient.invalidateQueries({ queryKey: BOUNTY_KEYS.myBounties(variables.walletAddress) });
+      if (walletAddress) {
+        queryClient.invalidateQueries({ queryKey: BOUNTY_KEYS.myBounties(walletAddress) });
+      }
     },
   });
 }
 
 // Get all bounties
 export function useBounties(params?: BountyListQuery) {
+  const apiClient = useApiClient();
+  
   return useQuery({
     queryKey: BOUNTY_KEYS.list(params),
     queryFn: () => apiClient.listBounties(params),
@@ -35,6 +41,8 @@ export function useBounties(params?: BountyListQuery) {
 
 // Get bounty by ID
 export function useBountyById(id: number | null) {
+  const apiClient = useApiClient();
+  
   return useQuery({
     queryKey: BOUNTY_KEYS.detail(id || 0),
     queryFn: () => apiClient.getBountyDetail(id!),
@@ -43,19 +51,25 @@ export function useBountyById(id: number | null) {
 }
 
 // Get user's bounties
-export function useMyBounties(wallet: string | null) {
+export function useMyBounties() {
+  const apiClient = useApiClient();
+  const { isConnected, walletAddress } = useWalletState();
+  
   return useQuery({
-    queryKey: BOUNTY_KEYS.myBounties(wallet || ''),
-    queryFn: () => apiClient.getMyBounties(wallet!),
-    enabled: !!wallet,
+    queryKey: BOUNTY_KEYS.myBounties(walletAddress || ''),
+    queryFn: () => apiClient.getMyBounties(),
+    enabled: isConnected && !!walletAddress,
   });
 }
 
 // Get bounties user has answered
-export function useAnsweredBounties(wallet: string | null) {
+export function useAnsweredBounties() {
+  const apiClient = useApiClient();
+  const { isConnected, walletAddress } = useWalletState();
+  
   return useQuery({
-    queryKey: BOUNTY_KEYS.answeredBounties(wallet || ''),
-    queryFn: () => apiClient.getAnsweredBounties(wallet!),
-    enabled: !!wallet,
+    queryKey: BOUNTY_KEYS.answeredBounties(walletAddress || ''),
+    queryFn: () => apiClient.getAnsweredBounties(),
+    enabled: isConnected && !!walletAddress,
   });
 }

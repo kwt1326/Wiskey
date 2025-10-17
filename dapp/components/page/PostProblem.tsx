@@ -16,12 +16,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../ui/alertDialog';
-import { useAppData } from '@/hooks/useAppData';
+import { useAuth } from '@/hooks/useAuth';
 import { useCreateBounty } from '@/hooks/api/bounties';
 
 export function PostProblem() {
   const router = useRouter();
-  const { auth } = useAppData();
+  const auth = useAuth();
   const createBountyMutation = useCreateBounty();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');

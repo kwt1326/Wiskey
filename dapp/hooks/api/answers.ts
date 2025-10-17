@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api-client';
+import { useApiClient, useWalletState } from '@/providers/ApiClientProvider';
 import { CreateAnswerDto } from '@/lib/types/api';
 import { BOUNTY_KEYS } from './bounties';
 
@@ -10,16 +10,20 @@ export const ANSWER_KEYS = {
 // Create answer
 export function useCreateAnswer() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
+  const { walletAddress } = useWalletState();
   
   return useMutation({
     mutationFn: (data: CreateAnswerDto) => apiClient.createAnswer(data),
-    onSuccess: (data, variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate bounty detail to update answer list
       queryClient.invalidateQueries({ queryKey: BOUNTY_KEYS.detail(variables.bountyId) });
       // Invalidate bounty lists to update answer counts
       queryClient.invalidateQueries({ queryKey: BOUNTY_KEYS.lists() });
       // Invalidate user's answered bounties
-      queryClient.invalidateQueries({ queryKey: BOUNTY_KEYS.answeredBounties(variables.walletAddress) });
+      if (walletAddress) {
+        queryClient.invalidateQueries({ queryKey: BOUNTY_KEYS.answeredBounties(walletAddress) });
+      }
     },
   });
 }

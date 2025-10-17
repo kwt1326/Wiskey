@@ -59,7 +59,7 @@ export class MyPageService {
 
     const bounties = await this.bountyRepository.find({
       where: { creator: { id: user.id } },
-      select: ['title', 'content', 'createdAt'],
+      select: ['id', 'title', 'content', 'createdAt'],
       order: { createdAt: 'DESC' },
       take: 5,
     });
@@ -84,18 +84,21 @@ export class MyPageService {
         title: b.title,
         content: b.content,
         createdAt: b.createdAt,
+        status: b.status,
       })),
       ...answers.map((a) => ({
         type: ActivityType.ANSWER,
         title: a.bounty.title,
         content: a.content,
         createdAt: a.createdAt,
+        status: a.status,
       })),
       ...wins.map((w) => ({
         type: ActivityType.WIN,
         title: w.bounty.title,
         rewardEth: w.bounty.rewardEth.toString(),
         createdAt: w.createdAt,
+        status: 'WINNER',
       })),
     ];
 

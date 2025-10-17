@@ -19,7 +19,7 @@ import {
   AlertDialogTrigger,
 } from '../ui/alertDialog';
 import { toast } from 'sonner';
-import { useAppData } from '@/hooks/useAppData';
+import { useAuth } from '@/hooks/useAuth';
 import { useBountyById } from '@/hooks/api/bounties';
 import { useCreateAnswer } from '@/hooks/api/answers';
 import { useSelectWinner } from '@/hooks/api/winners';
@@ -30,11 +30,11 @@ interface ProblemDetailProps {
 
 export function ProblemDetail({ bountyId }: ProblemDetailProps) {
   const router = useRouter();
-  const { auth } = useAppData();
+  const auth = useAuth();
   const [answerContent, setAnswerContent] = useState('');
   
   // Fetch bounty details
-  const { data: apiBounty, isLoading: bountyLoading } = useBountyById(parseInt(bountyId));
+  const { data: apiBounty, isLoading: bountyLoading, error: bountyError } = useBountyById(parseInt(bountyId));
   
   // Mutations
   const createAnswerMutation = useCreateAnswer();
@@ -51,10 +51,28 @@ export function ProblemDetail({ bountyId }: ProblemDetailProps) {
     );
   }
 
+  if (bountyError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error loading bounty</p>
+          <Button onClick={() => router.back()} variant="outline">
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (!apiBounty) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
-        <p className="text-slate-600">Bounty not found</p>
+        <div className="text-center">
+          <p className="text-slate-600 mb-4">Bounty not found</p>
+          <Button onClick={() => router.back()} variant="outline">
+            Go Back
+          </Button>
+        </div>
       </div>
     );
   }
@@ -62,7 +80,6 @@ export function ProblemDetail({ bountyId }: ProblemDetailProps) {
   // Transform API data
   const bounty = {
     ...apiBounty,
-    status: 'open' as const, // Simplified for now
     timeLeft: apiBounty.expiresAt ? 
       new Date(apiBounty.expiresAt).toLocaleDateString() : 'No deadline',
     reward: parseFloat(apiBounty.rewardEth),

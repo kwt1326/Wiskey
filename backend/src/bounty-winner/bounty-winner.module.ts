@@ -9,7 +9,6 @@ import { Answer } from 'src/answer/answer.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([BountyWinner, Bounty, Answer]),
-    BountyWinnerModule,
   ],
   controllers: [BountyWinnerController],
   providers: [BountyWinnerService],

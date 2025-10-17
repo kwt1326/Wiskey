@@ -1,12 +1,10 @@
 // 🚀 Clean hooks for the Solve3 dapp
 // Simple, readable API integration
 
-// 🎯 Main hooks (use these for most cases)
+// 🎯 Main auth hook
 export { useAuth } from './useAuth';
-export { useAppData } from './useAppData';
-export { useSimpleData } from './useSimpleData';
 
-// 🔧 Specific API hooks (for targeted usage)
+// 🔧 Specific API hooks (use these for targeted data fetching)
 export * from './api/users';
 export * from './api/bounties';
 export * from './api/answers';

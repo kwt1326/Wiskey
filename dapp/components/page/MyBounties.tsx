@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState } from 'react';
@@ -9,31 +8,29 @@ import { Badge } from '../ui/badge';
 import { Card, CardContent } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { MobileBottomSection } from '../MobileBottomSection';
-import { useAppData } from '@/hooks/useAppData';
-import type { Bounty } from '@/lib/types/api';
+import { useAuth } from '@/hooks/useAuth';
+import { useMyBounties, useAnsweredBounties } from '@/hooks/api/bounties';
+import { type Bounty as _Bounty, type Answer, AnswerStatus } from '@/lib/types/api';
 import PageMainWrapper from '../PageMainWrapper';
 
 export function MyBounties() {
   const router = useRouter();
-  const { auth, myBounties, myAnswers } = useAppData();
+  const auth = useAuth();
+  const myBounties = useMyBounties();
+  const myAnswers = useAnsweredBounties();
   const [activeTab, setActiveTab] = useState('posted');
 
-  // Use API data
+  // Use API data with loading states
   const postedBounties = myBounties.data || [];
-  
-  // Filter bounties where user has answered
   const answeredBounties = myAnswers.data || [];
+  const _isLoading = myBounties.isLoading || myAnswers.isLoading;
+  const _hasError = myBounties.error || myAnswers.error;
 
-  const getUserAnswerStatus = (bounty: Bounty) => {
-    const userAnswer = bounty.answers?.find((a: any) => a.author?.walletAddress === auth.userWallet);
-    if (!userAnswer) return null;
-    
-    // This would need proper logic to check BountyWinner records
-    // For now, simplified logic
-    return 'pending';
-  };
+  const getUserAnswerStatus = (bounty: any) =>
+    bounty.answers?.find((a: Answer) => a.author?.walletAddress === auth.userWallet)
+      ? AnswerStatus.WINNER : AnswerStatus.PENDING;
 
-  const renderBountyCard = (bounty: Bounty, type: 'posted' | 'answered') => {
+  const renderBountyCard = (bounty: any, type: 'posted' | 'answered') => {
     const answerStatus = type === 'answered' ? getUserAnswerStatus(bounty) : null;
     
     return (
@@ -78,7 +75,7 @@ export function MyBounties() {
           </div>
           
           <p className="text-slate-600 text-sm mb-4 line-clamp-2">
-            {bounty.content || bounty.description}
+            {bounty.content}
           </p>
           
           <div className="flex items-center justify-between">

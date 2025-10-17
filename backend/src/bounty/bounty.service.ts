@@ -34,17 +34,21 @@ export class BountyService {
   async list(sort: 'latest' | 'views' | 'reward' | 'answers') {
     const qb = this.bountyRepository
       .createQueryBuilder('b')
-      .leftJoin('b.answers', 'a')
-      .leftJoin('b.creator', 'creator')
+      .leftJoinAndSelect('b.creator', 'creator')
       .loadRelationCountAndMap('b.answerCount', 'b.answers')
-      .loadRelationCountAndMap('b.winnerCount', 'b.winner')
-      .addSelect('COALESCE(SUM(b.rewardEth), 0)', 'totalRewardEth')
-      .groupBy('b.id');
+      .loadRelationCountAndMap('b.winnerCount', 'b.winners');
 
     if (sort === 'latest') qb.orderBy('b.createdAt', 'DESC');
     else if (sort === 'views') qb.orderBy('b.views', 'DESC');
     else if (sort === 'reward') qb.orderBy('b.rewardEth', 'DESC');
-    else if (sort === 'answers') qb.orderBy('b.answerCount', 'ASC');
+    else if (sort === 'answers') {
+      // For sorting by answer count, we need to handle it differently
+      qb.leftJoin('b.answers', 'a')
+        .addSelect('COUNT(a.id)', 'answerCount')
+        .groupBy('b.id')
+        .addGroupBy('creator.id')
+        .orderBy('COUNT(a.id)', 'ASC');
+    }
 
     const results = await qb.getMany();
     return results.map((b) => this.toSummaryDto(b));
@@ -85,7 +89,7 @@ export class BountyService {
 
   /** 내가 답변한 바운티 */
   async getAnsweredBounties(wallet: string): Promise<BountySummaryDto[]> {
-    await this.userService.findOrCreate({
+    const user = await this.userService.findOrCreate({
       walletAddress: wallet,
     });
 
@@ -93,9 +97,10 @@ export class BountyService {
       .createQueryBuilder('b')
       .innerJoin('b.answers', 'a')
       .innerJoin('a.author', 'u')
+      .leftJoinAndSelect('b.creator', 'creator')
       .where('u.walletAddress = :wallet', { wallet })
       .loadRelationCountAndMap('b.answerCount', 'b.answers')
-      .groupBy('b.id')
+      .loadRelationCountAndMap('b.winnerCount', 'b.winners')
       .orderBy('b.createdAt', 'DESC');
 
     const results = await qb.getMany();

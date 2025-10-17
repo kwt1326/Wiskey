@@ -6,6 +6,7 @@ import { OnchainKitProvider } from "@coinbase/onchainkit";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
+import { ApiClientProvider } from './ApiClientProvider';
 import "@coinbase/onchainkit/styles.css";
 
 // Create optimized Query Client
@@ -49,7 +50,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
           },
         }}
       >
-        {children}
+        <ApiClientProvider>
+          {children}
+        </ApiClientProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </OnchainKitProvider>
     </QueryClientProvider>

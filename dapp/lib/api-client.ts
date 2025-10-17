@@ -17,9 +17,14 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 class ApiClient {
   private baseUrl: string;
+  private walletAddress: string | null = null;
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
+  }
+
+  setWalletAddress(address: string | null) {
+    this.walletAddress = address;
   }
 
   private async request<T>(
@@ -27,11 +32,18 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
+    const headers: Record<string, any> = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    // Add wallet address to headers if available
+    if (this.walletAddress) {
+      headers['x-wallet-address'] = this.walletAddress;
+    }
+
     const config: RequestInit = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+      headers,
       ...options,
     };
 
@@ -64,12 +76,12 @@ class ApiClient {
     return this.request<Bounty>(`/bounties/${id}`);
   }
 
-  async getMyBounties(wallet: string): Promise<Bounty[]> {
-    return this.request<Bounty[]>(`/bounties/mine/list?wallet=${wallet}`);
+  async getMyBounties(): Promise<Bounty[]> {
+    return this.request<Bounty[]>('/bounties/mine/list');
   }
 
-  async getAnsweredBounties(wallet: string): Promise<Bounty[]> {
-    return this.request<Bounty[]>(`/bounties/answered/list?wallet=${wallet}`);
+  async getAnsweredBounties(): Promise<Bounty[]> {
+    return this.request<Bounty[]>('/bounties/answered/list');
   }
 
   // Answer endpoints
@@ -88,17 +100,17 @@ class ApiClient {
     });
   }
 
-  async getUserProfile(wallet: string): Promise<User> {
-    return this.request<User>(`/user/me?wallet=${wallet}`);
+  async getUserProfile(): Promise<User> {
+    return this.request<User>('/user/me');
   }
 
   // MyPage endpoints
-  async getMyPageStats(wallet: string): Promise<MyPageStats> {
-    return this.request<MyPageStats>(`/mypage/stats?wallet=${wallet}`);
+  async getMyPageStats(): Promise<MyPageStats> {
+    return this.request<MyPageStats>('/mypage/stats');
   }
 
-  async getRecentActivities(wallet: string): Promise<RecentActivity[]> {
-    return this.request<RecentActivity[]>(`/mypage/activities?wallet=${wallet}`);
+  async getRecentActivities(): Promise<RecentActivity[]> {
+    return this.request<RecentActivity[]>('/mypage/activities');
   }
 
   // Winner endpoints

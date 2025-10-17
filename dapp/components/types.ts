@@ -1,3 +1,5 @@
+import { Bounty } from '@/lib/types/api';
+
 // Re-export API types for component use
 export type { 
   Bounty, 

@@ -1,6 +1,7 @@
 import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Answer } from '../answer/answer.entity';
+import { BountyWinner } from '../bounty-winner/bounty-winner.entity';
 import { BaseEntity } from '../common/base.entity';
 import { BountyStatus } from '../common/types';
 
@@ -40,4 +41,7 @@ export class Bounty extends BaseEntity {
 
   @OneToMany(() => Answer, (answer) => answer.bounty, { cascade: true })
   answers: Answer[];
+
+  @OneToMany(() => BountyWinner, (winner) => winner.bounty)
+  winners: BountyWinner[];
 }

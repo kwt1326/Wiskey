@@ -6,6 +6,7 @@ export enum ActivityType {
 
 export class RecentActivityDto {
   type: ActivityType;
+  status: string;
   title?: string;
   content?: string;
   rewardEth?: string;

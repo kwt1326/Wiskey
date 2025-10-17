@@ -30,7 +30,6 @@ export default function WalletConnector({ onConnect }: WalletConnectorProps) {
     if (!isConnected || !address) {
       return;
     }
-    
     onConnect(address);
   }, [address, isConnected, onConnect]);
 

@@ -62,6 +62,7 @@ export enum ActivityType {
 
 export interface RecentActivity {
   type: ActivityType;
+  status: string;
   title?: string;
   content?: string;
   rewardEth?: string;

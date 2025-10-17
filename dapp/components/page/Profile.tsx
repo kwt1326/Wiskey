@@ -14,19 +14,21 @@ import {
   Award,
   TrendingUp,
 } from 'lucide-react';
-import { useAuth, useUserProfile, useMyPageStats, useRecentActivities } from '@/hooks';
+import { useAuth } from '@/hooks/useAuth';
+import { useMyPageStats, useRecentActivities } from '@/hooks';
 import { toast } from 'sonner';
 import PageMainWrapper from '../PageMainWrapper';
+import WalletConnector from '../base/WalletConnector';
+import { ActivityType } from '@/lib/types/api';
 
 export function Profile() {
   const router = useRouter();
-  const { walletAddress, isConnected } = useAuth();
-  const { data: userProfile } = useUserProfile(walletAddress);
-  const { data: stats } = useMyPageStats(walletAddress);
-  const { data: activities } = useRecentActivities(walletAddress);
+  const auth = useAuth();
+  const { data: stats } = useMyPageStats();
+  const { data: activities = [] } = useRecentActivities();
   const copyAddress = () => {
-    if (walletAddress) {
-      navigator.clipboard.writeText(walletAddress);
+    if (auth.userWallet) {
+      navigator.clipboard.writeText(auth.userWallet);
       toast.success('Address copied!');
     }
   };
@@ -35,13 +37,30 @@ export function Profile() {
   const userBounties = stats?.bountyCount || 0;
   const userAnswers = stats?.answerCount || 0;
   const rewardsEarned = parseFloat(stats?.totalRewardEth || '0');
-  const winCount = stats?.winCount || 0;
+  const _winCount = stats?.winCount || 0;
 
   const generateAvatar = (address: string) => {
     const colors = ['bg-emerald-400', 'bg-teal-400', 'bg-green-400', 'bg-cyan-400'];
     const index = address ? parseInt(address.slice(-1), 16) % colors.length : 0;
     return colors[index];
   };
+
+
+  const timeAgoIntl = (date: Date, locale = 'en'): string => {
+    const now = new Date();
+    const diff = date.getTime() - now.getTime();
+
+    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (Math.abs(days) > 0) return rtf.format(-days, 'day');
+    if (Math.abs(hours) > 0) return rtf.format(-hours, 'hour');
+    if (Math.abs(minutes) > 0) return rtf.format(-minutes, 'minute');
+    return rtf.format(-seconds, 'second');
+  }
 
   return (
     <>
@@ -68,7 +87,7 @@ export function Profile() {
 
         <div className="flex-1 px-5 py-6 space-y-6 overflow-y-auto min-h-0" style={{ maxHeight: 'calc(100vh - 77px)' }}>
           {/* Wallet Connection Check */}
-          {!isWalletConnected ? (
+          {!auth.isConnected ? (
             <Card className="bg-gradient-to-r from-emerald-100 to-teal-100 border border-emerald-200">
               <CardContent className="p-6 text-center">
                 <div className="w-16 h-16 bg-emerald-200 rounded-3xl flex items-center justify-center mx-auto mb-4">
@@ -76,12 +95,7 @@ export function Profile() {
                 </div>
                 <h3 className="text-xl font-semibold text-emerald-900 mb-2">Connect Your Wallet</h3>
                 <p className="text-emerald-700 mb-6">Connect your wallet to view your profile and track your activity</p>
-                <Button
-                  onClick={openConnectModal}
-                  className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl px-8 py-3 font-semibold"
-                >
-                  Connect Wallet
-                </Button>
+                <WalletConnector onConnect={auth.connectWallet}/>
               </CardContent>
             </Card>
           ) : (
@@ -90,7 +104,7 @@ export function Profile() {
                 <Card className="bg-white/90 backdrop-blur-sm border border-emerald-200/50 shadow-sm">
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">
-                      <div className={`w-16 h-16 ${generateAvatar(userWallet || '')} rounded-2xl flex items-center justify-center`}>
+                      <div className={`w-16 h-16 ${generateAvatar(auth.userWallet || '')} rounded-2xl flex items-center justify-center`}>
                         <div className="w-8 h-8 bg-white/30 rounded-xl"></div>
                       </div>
                       <div className="flex-1">
@@ -101,7 +115,7 @@ export function Profile() {
                             overflow: 'hidden',
                             display: 'inline-block',
                             maxWidth: '200px'
-                          }}>{userWallet}</span>
+                          }}>{auth.userWallet}</span>
                           <Button
                             variant="ghost"
                           size="sm"
@@ -123,7 +137,7 @@ export function Profile() {
                     <div className="w-10 h-10 bg-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-2">
                       <FileText className="h-5 w-5 text-white" />
                     </div>
-                    <div className="text-2xl font-bold text-emerald-800">{userBounties.length}</div>
+                    <div className="text-2xl font-bold text-emerald-800">{userBounties}</div>
                     <div className="text-xs text-emerald-700 font-medium">Posted</div>
                   </CardContent>
                 </Card>
@@ -133,7 +147,7 @@ export function Profile() {
                     <div className="w-10 h-10 bg-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-2">
                       <MessageSquare className="h-5 w-5 text-white" />
                     </div>
-                    <div className="text-2xl font-bold text-teal-800">{userAnswers.length}</div>
+                    <div className="text-2xl font-bold text-teal-800">{userAnswers}</div>
                     <div className="text-xs text-teal-700 font-medium">Answered</div>
                   </CardContent>
                 </Card>
@@ -158,15 +172,15 @@ export function Profile() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {recentActivity.slice(0, 5).map((activity, index) => (
+                  {activities.slice(0, 5).map((activity, index) => (
                     <div key={index} className="flex items-center space-x-3 p-3 bg-emerald-50/50 rounded-2xl">
-                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${activity.type === 'posted' ? 'bg-emerald-100' :
-                          activity.type === 'answered' ? 'bg-teal-100' : 'bg-amber-100'
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${activity.type === ActivityType.BOUNTY ? 'bg-emerald-100' :
+                          activity.type === ActivityType.ANSWER ? 'bg-teal-100' : 'bg-amber-100'
                         }`}>
-                        {activity.type === 'posted' ? (
-                          <FileText className={`h-4 w-4 ${activity.type === 'posted' ? 'text-emerald-600' : ''
+                        {activity.type === ActivityType.BOUNTY ? (
+                          <FileText className={`h-4 w-4 ${activity.type === ActivityType.BOUNTY ? 'text-emerald-600' : ''
                             }`} />
-                        ) : activity.type === 'answered' ? (
+                        ) : activity.type === ActivityType.ANSWER ? (
                           <MessageSquare className="h-4 w-4 text-teal-600" />
                         ) : (
                           <Award className="h-4 w-4 text-amber-600" />
@@ -185,7 +199,7 @@ export function Profile() {
                           >
                             {activity.status}
                           </Badge>
-                          <span className="text-xs text-slate-500">{activity.time}</span>
+                          <span className="text-xs text-slate-500">{timeAgoIntl(new Date(activity.createdAt))}</span>
                         </div>
                       </div>
                     </div>

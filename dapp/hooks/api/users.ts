@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api-client';
+import { useApiClient, useWalletState } from '@/providers/ApiClientProvider';
 import { CreateUserDto } from '@/lib/types/api';
 
 export const USER_KEYS = {
@@ -16,6 +16,7 @@ export const MYPAGE_KEYS = {
 // Connect wallet (creates user if doesn't exist)
 export function useConnectWallet() {
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
   
   return useMutation({
     mutationFn: (data: CreateUserDto) => apiClient.connectWallet(data),
@@ -27,28 +28,37 @@ export function useConnectWallet() {
 }
 
 // Get user profile
-export function useUserProfile(wallet: string | null) {
+export function useUserProfile() {
+  const apiClient = useApiClient();
+  const { isConnected, walletAddress } = useWalletState();
+  
   return useQuery({
-    queryKey: USER_KEYS.profile(wallet || ''),
-    queryFn: () => apiClient.getUserProfile(wallet!),
-    enabled: !!wallet,
+    queryKey: USER_KEYS.profile(walletAddress || ''),
+    queryFn: () => apiClient.getUserProfile(),
+    enabled: isConnected && !!walletAddress,
   });
 }
 
 // Get user stats
-export function useMyPageStats(wallet: string | null) {
+export function useMyPageStats() {
+  const apiClient = useApiClient();
+  const { isConnected, walletAddress } = useWalletState();
+  
   return useQuery({
-    queryKey: MYPAGE_KEYS.stats(wallet || ''),
-    queryFn: () => apiClient.getMyPageStats(wallet!),
-    enabled: !!wallet,
+    queryKey: MYPAGE_KEYS.stats(walletAddress || ''),
+    queryFn: () => apiClient.getMyPageStats(),
+    enabled: isConnected && !!walletAddress,
   });
 }
 
 // Get recent activities
-export function useRecentActivities(wallet: string | null) {
+export function useRecentActivities() {
+  const apiClient = useApiClient();
+  const { isConnected, walletAddress } = useWalletState();
+  
   return useQuery({
-    queryKey: MYPAGE_KEYS.activities(wallet || ''),
-    queryFn: () => apiClient.getRecentActivities(wallet!),
-    enabled: !!wallet,
+    queryKey: MYPAGE_KEYS.activities(walletAddress || ''),
+    queryFn: () => apiClient.getRecentActivities(),
+    enabled: isConnected && !!walletAddress,
   });
 }

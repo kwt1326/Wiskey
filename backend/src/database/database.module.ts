@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../user/user.entity';
 import { Bounty } from '../bounty/bounty.entity';
 import { Answer } from '../answer/answer.entity';
+import { BountyWinner } from '../bounty-winner/bounty-winner.entity';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { Answer } from '../answer/answer.entity';
         username: configService.get('DB_USERNAME', 'postgres'),
         password: configService.get('DB_PASSWORD', 'password'),
         database: configService.get('DB_NAME', 'solve'),
-        entities: [User, Bounty, Answer],
+        entities: [User, Bounty, Answer, BountyWinner],
         synchronize: configService.get('NODE_ENV') !== 'production',
         logging: configService.get('NODE_ENV') === 'development',
       }),
