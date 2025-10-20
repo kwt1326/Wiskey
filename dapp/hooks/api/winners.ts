@@ -22,19 +22,3 @@ export function useSelectWinner() {
     },
   });
 }
-
-// Pay reward
-export function usePayReward() {
-  const queryClient = useQueryClient();
-  const apiClient = useApiClient();
-  
-  return useMutation({
-    mutationFn: (id: number) => apiClient.payReward(id),
-    onSuccess: (data) => {
-      // Invalidate bounty detail to update payment status
-      queryClient.invalidateQueries({ queryKey: BOUNTY_KEYS.detail(data.bounty.id) });
-      // Invalidate bounty lists to update status
-      queryClient.invalidateQueries({ queryKey: BOUNTY_KEYS.lists() });
-    },
-  });
-}

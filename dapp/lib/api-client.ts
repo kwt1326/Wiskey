@@ -157,12 +157,6 @@ class ApiClient {
       body: JSON.stringify(data),
     });
   }
-
-  async payReward(id: number): Promise<BountyWinner> {
-    return this.request<BountyWinner>(`/winners/${id}/reward`, {
-      method: 'PATCH',
-    });
-  }
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);
