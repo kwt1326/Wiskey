@@ -70,7 +70,6 @@ export interface Answer extends BaseEntity {
 export interface BountyWinner extends BaseEntity {
   bounty: Bounty;
   answer: Answer;
-  rewardPaid: boolean;
   txHash?: string;
 }
 

@@ -52,7 +52,6 @@ export class BountyWinnerService {
       const winner = this.winnerRepository.create({
         bounty,
         answer,
-        rewardPaid: true,
         txHash: receipt.transactionHash,
       });
 

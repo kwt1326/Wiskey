@@ -11,9 +11,6 @@ export class BountyWinner extends BaseEntity {
   @ManyToOne(() => Answer, { eager: true, onDelete: 'CASCADE' })
   answer: Answer;
 
-  @Column({ name: 'reward_paid', type: 'boolean', default: false })
-  rewardPaid: boolean;
-
   @Column({ name: 'tx_hash', type: 'varchar', nullable: true })
   txHash?: string;
 }
