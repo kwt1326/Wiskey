@@ -20,12 +20,21 @@ export class WalletAuthMiddleware implements NestMiddleware {
     'POST /api/answers',
     'GET /api/mypage/stats',
     'GET /api/mypage/activities',
+    'POST /api/winners/select',
+    'PATCH /api/winners',
   ];
 
   private requiresAuthentication(method: string, path: string): boolean {
     const route = `${method} ${path}`;
     return this.authenticatedRoutes.some((authRoute) => {
-      // Exact match only - no wildcard matching to avoid false positives
+      // Handle PATCH /winners routes with dynamic IDs
+      if (
+        authRoute === 'PATCH /api/winners' &&
+        route.startsWith('PATCH /api/winners/')
+      ) {
+        return true;
+      }
+      // Exact match for other routes
       return route === authRoute;
     });
   }

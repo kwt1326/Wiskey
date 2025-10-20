@@ -44,7 +44,7 @@ export class BountyWinnerService {
     try {
       // Call contract distribute function (9:1 ratio - 90% to winner, 10% to operation wallet)
       const receipt = await VaultService.distributeReward(
-        parseInt(bounty.vaultBountyId),
+        bounty.vaultBountyId,
         answer.author.walletAddress,
       );
 
@@ -76,40 +76,6 @@ export class BountyWinnerService {
       throw new Error(
         `Failed to distribute reward and select winner: ${err.message}`,
       );
-    }
-  }
-
-  async payReward(winnerId: number) {
-    const winner = await this.winnerRepository.findOne({
-      where: { id: winnerId },
-      relations: ['bounty', 'answer', 'answer.author'],
-    });
-    if (!winner) throw new Error('Winner not found');
-    if (winner.rewardPaid) throw new Error('Reward already paid');
-
-    const bounty = winner.bounty;
-    if (!bounty.vaultBountyId)
-      throw new Error('Bounty vault ID missing – cannot distribute reward.');
-
-    const toAddress = winner.answer.author.walletAddress;
-
-    try {
-      const receipt = await VaultService.distributeReward(
-        parseInt(bounty.vaultBountyId),
-        toAddress,
-      );
-
-      winner.rewardPaid = true;
-      winner.txHash = receipt.transactionHash;
-      await this.winnerRepository.save(winner);
-
-      return {
-        status: 'success',
-        txHash: receipt.transactionHash,
-        gasUsed: receipt.gasUsed.toString(),
-      };
-    } catch (err) {
-      throw new Error(`Vault reward distribution failed: ${err.message}`);
     }
   }
 }

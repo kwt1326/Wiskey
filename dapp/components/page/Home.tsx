@@ -39,11 +39,11 @@ export function Home() {
       case 'newest':
         return [...openBounties].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       case 'popular':
-        return [...openBounties].sort((a, b) => (b.answers?.length || 0) - (a.answers?.length || 0));
+        return [...openBounties].sort((a, b) => (b.answerCount || 0) - (a.answerCount || 0));
       case 'high-reward':
         return [...openBounties].sort((a, b) => parseFloat(b.rewardEth || '0') - parseFloat(a.rewardEth || '0'));
       case 'few-answers':
-        return [...openBounties].sort((a, b) => (a.answers?.length || 0) - (b.answers?.length || 0));
+        return [...openBounties].sort((a, b) => (a.answerCount || 0) - (b.answerCount || 0));
       default:
         return openBounties;
     }
@@ -177,12 +177,12 @@ export function Home() {
 
                         <div className="flex items-center space-x-2 text-slate-500">
                           <Clock className="h-4 w-4" />
-                          <span className="text-sm font-medium">{bounty.expiresAt ? new Date(bounty.expiresAt).toLocaleDateString() : 'No deadline'}</span>
+                          <span className="text-sm font-medium">{bounty.remainingTime ?? 'No deadline'}</span>
                         </div>
                       </div>
 
                       <div className="text-sm text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full font-medium">
-                        {bounty.answers.length} answer{bounty.answers.length !== 1 ? 's' : ''}
+                        {bounty.answerCount} answer{bounty.answerCount !== 1 ? 's' : ''}
                       </div>
                     </div>
                   </CardContent>

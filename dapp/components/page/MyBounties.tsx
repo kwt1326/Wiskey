@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { MobileBottomSection } from '../MobileBottomSection';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyBounties, useAnsweredBounties } from '@/hooks/api/bounties';
-import { type Bounty as _Bounty, type Answer, AnswerStatus } from '@/lib/types/api';
+import { type Bounty as _Bounty, type Answer, AnswerStatus, Bounty } from '@/lib/types/api';
 import PageMainWrapper from '../PageMainWrapper';
 
 export function MyBounties() {
@@ -30,7 +30,7 @@ export function MyBounties() {
     bounty.answers?.find((a: Answer) => a.author?.walletAddress === auth.userWallet)
       ? AnswerStatus.WINNER : AnswerStatus.PENDING;
 
-  const renderBountyCard = (bounty: any, type: 'posted' | 'answered') => {
+  const renderBountyCard = (bounty: Bounty, type: 'posted' | 'answered') => {
     const answerStatus = type === 'answered' ? getUserAnswerStatus(bounty) : null;
     
     return (
@@ -92,14 +92,14 @@ export function MyBounties() {
             </div>
             
             <div className="text-xs text-slate-500">
-              {bounty.answers.length} answer{bounty.answers.length !== 1 ? 's' : ''}
+              {bounty.answerCount} answer{bounty.answerCount !== 1 ? 's' : ''}
             </div>
           </div>
           
-          {type === 'posted' && bounty.status === 'open' && bounty.answers.length > 0 && (
+          {type === 'posted' && bounty.status === 'open' && bounty.answerCount > 0 && (
             <div className="mt-3 pt-3 border-t border-slate-100">
               <p className="text-sm text-emerald-600 font-medium">
-                {bounty.answers.length} answer{bounty.answers.length !== 1 ? 's' : ''} waiting for review
+                {bounty.answerCount} answer{bounty.answerCount !== 1 ? 's' : ''} waiting for review
               </p>
             </div>
           )}

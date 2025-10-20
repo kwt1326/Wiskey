@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { BountyWinnerService } from './bounty-winner.service';
 import { SelectWinnerDto } from './dto/select-winner.dto';
 
@@ -9,10 +9,5 @@ export class BountyWinnerController {
   @Post('select')
   selectWinner(@Body() dto: SelectWinnerDto) {
     return this.winnerService.selectWinner(dto);
-  }
-
-  @Patch(':id/reward')
-  payReward(@Param('id') id: number) {
-    return this.winnerService.payReward(id);
   }
 }

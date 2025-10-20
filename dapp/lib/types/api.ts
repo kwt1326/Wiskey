@@ -25,16 +25,37 @@ export interface User extends BaseEntity {
 
 // Bounty entity
 export interface Bounty extends BaseEntity {
-  title: string;
-  content: string;
-  rewardEth: string;
-  rewardTxHash?: string;
-  vaultBountyId?: string;
-  views: number;
-  expiresAt: string | null;
+  title: string;                  // 예: "test1"
+  content: string;                // 예: "dsad"
   status: BountyStatus;
-  creator: User;
-  answers: Answer[];
+  remainingTime: string;          // 남은 시간 표시 텍스트, 예: "6일 남음"
+
+  answerCount: number;            // 예: 0
+  views: number;                  // 예: 0
+  winnerCount: number;            // 예: 0
+
+  rewardEth: string;              // 소수 정밀도 보존을 위해 string, 예: "0.00100000"
+  totalRewardEth: string;         // 예: "0.00100000"
+  vaultBountyId: string | null;
+  expiresAt: string | null;
+}
+
+// Bounty detail
+export interface BountyDetail {
+  id: number;                                   // 예: 104
+  createdAt: string;                            // ISO 문자열, 예: "2025-10-18T21:40:25.714Z"
+  updatedAt: string;                            // ISO 문자열, 예: "2025-10-18T22:30:17.187Z"
+  title: string;                                // 예: "test1"
+  content: string;                              // 예: "dsad"
+  rewardEth: string;                            // 정밀도 보존 위해 string, 예: "0.00100000"
+  rewardTxHash: string;                         // 예: "0x377f...e4ec"
+  vaultBountyId: string;                        // 예: "5cc5...20ec"
+  views: number;                                // 예: 2
+  expiresAt: string;                            // ISO 문자열, 예: "2025-10-26T06:40:25.705Z"
+  status: BountyStatus;                 // 현재는 "open"만 확인됨
+  creator: User;                       // 작성자 정보
+  answers: Answer[];                      // 답변 목록 (현재는 빈 배열)
+  remainingTime: string;                        // 예: "6일 남음"
 }
 
 // Answer entity
@@ -82,12 +103,10 @@ export interface CreateBountyDto {
   content: string;
   rewardTxHash: string;
   vaultBountyId: string;
-  rewardEth: number;
-  walletAddress: string;
+  rewardEth: string;
 }
 
 export interface CreateAnswerDto {
-  walletAddress: string;
   content: string;
   bountyId: number;
 }

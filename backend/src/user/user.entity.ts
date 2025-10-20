@@ -5,7 +5,7 @@ import { BaseEntity } from '../common/base.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
-  @Column({ name: 'wallet_address', unique: true, collation: 'C' })
+  @Column({ name: 'wallet_address', unique: true, type: 'citext' })
   walletAddress: string;
 
   @OneToMany(() => Bounty, (bounty) => bounty.creator)

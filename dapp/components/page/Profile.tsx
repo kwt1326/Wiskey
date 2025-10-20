@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
@@ -26,6 +26,7 @@ export function Profile() {
   const auth = useAuth();
   const { data: stats } = useMyPageStats();
   const { data: activities = [] } = useRecentActivities();
+
   const copyAddress = () => {
     if (auth.userWallet) {
       navigator.clipboard.writeText(auth.userWallet);
@@ -46,21 +47,27 @@ export function Profile() {
   };
 
 
-  const timeAgoIntl = (date: Date, locale = 'en'): string => {
-    const now = new Date();
-    const diff = date.getTime() - now.getTime();
-
+  const timeAgoIntl = (
+    date: Date,
+    locale = 'en',
+  ): string => {
     const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
-    const seconds = Math.floor(diff / 1000);
+
+    const nowUtcMs = Date.now();
+    const targetUtcMs = date.getTime();
+    const diffMs = nowUtcMs - targetUtcMs;
+
+    const seconds = Math.floor(diffMs / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (Math.abs(days) > 0) return rtf.format(-days, 'day');
-    if (Math.abs(hours) > 0) return rtf.format(-hours, 'hour');
-    if (Math.abs(minutes) > 0) return rtf.format(-minutes, 'minute');
-    return rtf.format(-seconds, 'second');
-  }
+    // 가장 큰 단위 우선
+    if (Math.abs(days) > 0) return rtf.format(days, 'day');
+    if (Math.abs(hours) > 0) return rtf.format(hours, 'hour');
+    if (Math.abs(minutes) > 0) return rtf.format(minutes, 'minute');
+    return rtf.format(seconds, 'second');
+  };
 
   return (
     <>
@@ -199,7 +206,9 @@ export function Profile() {
                           >
                             {activity.status}
                           </Badge>
-                          <span className="text-xs text-slate-500">{timeAgoIntl(new Date(activity.createdAt))}</span>
+                          <span className="text-xs text-slate-500">
+                            {timeAgoIntl(new Date(activity.createdAt))}
+                          </span>
                         </div>
                       </div>
                     </div>

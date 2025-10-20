@@ -11,39 +11,30 @@ import { User } from '@/lib/types/api';
  */
 export function useAuth() {
   const { address, isConnected, isConnecting } = useAccount();
-  const { disconnect } = useDisconnect();
-
-  const [user, setUser] = useState<User | undefined>(undefined);
+  const { disconnect: disconnectWallet } = useDisconnect();
   
-  // Get user profile when wallet is connected
   const { 
     data: userProfile, 
     isLoading: isLoadingProfile, 
     error: profileError 
   } = useUserProfile();
   
-  // Connect wallet mutation
   const connectWalletMutation = useConnectWallet();
 
   const connectWallet = useCallback(async (walletAddress: string) => {
     try {
-      if (user) return;
-
-      const connectedUser = await connectWalletMutation.mutateAsync({ walletAddress });
-      setUser(connectedUser)
+      await connectWalletMutation.mutateAsync({ walletAddress });
     } catch (error) {
       console.error('Failed to connect wallet:', error);
     }
   }, [connectWalletMutation]);
 
-  const disconnectWallet = () => disconnect();
-
   // Auto-connect wallet when address is available
   useEffect(() => {
-    if (!user && address && !userProfile && !isLoadingProfile && !profileError) {
+    if (address && isConnected) {
       connectWallet(address);
     }
-  }, [user, address, userProfile, isLoadingProfile, profileError, connectWallet]);
+  }, [address, isConnected]);
 
   return {
     // Wallet state
@@ -52,10 +43,9 @@ export function useAuth() {
     isConnecting,
     
     // User state
-    user: user || userProfile,
     userProfile,
     isLoadingProfile,
-    isAuthenticated: isConnected && !!(user || userProfile),
+    isAuthenticated: isConnected && !!userProfile,
     
     // Actions
     connectWallet,

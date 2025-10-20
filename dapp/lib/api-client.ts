@@ -11,6 +11,7 @@ import {
   CreateUserDto,
   SelectWinnerDto,
   BountyListQuery,
+  BountyDetail,
 } from './types/api';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
@@ -18,6 +19,19 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 class ApiClient {
   private baseUrl: string;
   private walletAddress: string | null = null;
+
+  // Define routes that require wallet authentication (matching backend)
+  private readonly authenticatedRoutes = [
+    'POST /bounties',
+    'GET /bounties/mine/list',
+    'GET /bounties/answered/list',
+    'GET /user/me',
+    'POST /answers',
+    'GET /mypage/stats',
+    'GET /mypage/activities',
+    'POST /winners/select',
+    'PATCH /winners',
+  ];
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
@@ -27,10 +41,33 @@ class ApiClient {
     this.walletAddress = address;
   }
 
+  private requiresAuthentication(method: string, endpoint: string): boolean {
+    const route = `${method} ${endpoint}`;
+    return this.authenticatedRoutes.some((authRoute) => {
+      // For PATCH /winners routes, we need to match the pattern since it includes dynamic IDs
+      if (authRoute === 'PATCH /winners' && route.startsWith('PATCH /winners/')) {
+        return true;
+      }
+      // Exact match for other routes
+      return route === authRoute;
+    });
+  }
+
+  private validateWalletAddress(method: string, endpoint: string): void {
+    if (this.requiresAuthentication(method, endpoint) && !this.walletAddress) {
+      throw new Error('Wallet address is required for this operation. Please connect your wallet first.');
+    }
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
+    const method = options.method || 'GET';
+    
+    // Validate wallet address before making the request
+    this.validateWalletAddress(method, endpoint);
+    
     const url = `${this.baseUrl}${endpoint}`;
     const headers: Record<string, any> = {
       'Content-Type': 'application/json',
@@ -72,8 +109,8 @@ class ApiClient {
     return this.request<Bounty[]>(`/bounties${query ? `?${query}` : ''}`);
   }
 
-  async getBountyDetail(id: number): Promise<Bounty> {
-    return this.request<Bounty>(`/bounties/${id}`);
+  async getBountyDetail(id: number): Promise<BountyDetail> {
+    return this.request<BountyDetail>(`/bounties/${id}`);
   }
 
   async getMyBounties(): Promise<Bounty[]> {

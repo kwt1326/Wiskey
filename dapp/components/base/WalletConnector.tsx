@@ -31,7 +31,7 @@ export default function WalletConnector({ onConnect }: WalletConnectorProps) {
       return;
     }
     onConnect(address);
-  }, [address, isConnected, onConnect]);
+  }, [address, isConnected]);
 
   return (
     <div className="flex justify-end">

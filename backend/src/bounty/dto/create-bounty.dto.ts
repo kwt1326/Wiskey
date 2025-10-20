@@ -1,4 +1,4 @@
-import { IsString, IsNumber } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateBountyDto {
   @IsString()
@@ -13,6 +13,6 @@ export class CreateBountyDto {
   @IsString()
   vaultBountyId: string;
 
-  @IsNumber()
-  rewardEth: number;
+  @IsString()
+  rewardEth: string;
 }

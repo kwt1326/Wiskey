@@ -32,6 +32,12 @@ export class BountySummaryDto {
   @ApiProperty()
   createdAt: Date;
 
+  @ApiProperty()
+  expiresAt: Date | null;
+
   @ApiProperty({ enum: BountyStatus })
   status: BountyStatus;
+
+  @ApiProperty()
+  vaultBountyId: string;
 }

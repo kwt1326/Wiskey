@@ -1,13 +1,10 @@
 "use client";
 
-import { ReactNode } from "react";
-import { base } from "wagmi/chains";
-import { OnchainKitProvider } from "@coinbase/onchainkit";
+import { ReactNode, useState } from "react";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { useState } from 'react';
 import { ApiClientProvider } from './ApiClientProvider';
-import "@coinbase/onchainkit/styles.css";
+import { OnchainKitProviderWrapper } from "./OnchainKitProvider";
 
 // Create optimized Query Client
 function createQueryClient() {
@@ -38,23 +35,12 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <OnchainKitProvider
-        apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
-        chain={base}
-        config={{
-          appearance: {
-            mode: "auto",
-          },
-          wallet: {
-            display: "modal",
-          },
-        }}
-      >
+      <OnchainKitProviderWrapper>
         <ApiClientProvider>
           {children}
         </ApiClientProvider>
         <ReactQueryDevtools initialIsOpen={false} />
-      </OnchainKitProvider>
+      </OnchainKitProviderWrapper>
     </QueryClientProvider>
   );
 }

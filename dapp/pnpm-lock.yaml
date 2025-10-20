@@ -107,6 +107,9 @@ importers:
       embla-carousel-react:
         specifier: ^8.6.0
         version: 8.6.0(react@19.2.0)
+      ethers:
+        specifier: 6.14.0
+        version: 6.14.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       input-otp:
         specifier: ^1.4.2
         version: 1.4.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -143,6 +146,9 @@ importers:
       tailwind-merge:
         specifier: ^2.5.2
         version: 2.6.0
+      uuid:
+        specifier: ^13.0.0
+        version: 13.0.0
       vaul:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.2.0(@types/react@19.2.1))(@types/react@19.2.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -179,6 +185,9 @@ importers:
         version: 5.9.3
 
 packages:
+
+  '@adraffy/ens-normalize@1.10.1':
+    resolution: {integrity: sha512-96Z2IP3mYmF1Xg2cDm8f1gWGf/HUVedQ3FMifV4kG/PQ4yEP51xDtRAEfhVNt5f/uzpNkZHwWQuUcu6D6K+Ekw==}
 
   '@adraffy/ens-normalize@1.11.1':
     resolution: {integrity: sha512-nhCBV3quEgesuf7c7KYfperqSS14T8bYuvJ8PcLJp6znkZpFc0AuW4qBtr8eKVyPPe/8RSr7sglCWPU5eaxwKQ==}
@@ -618,6 +627,9 @@ packages:
     resolution: {integrity: sha512-2I0gnIVPtfnMw9ee9h1dJG7tp81+8Ob3OJb3Mv37rx5L40/b0i7djjCVvGOVqc9AEIQyvyu1i6ypKdFw8R8gQw==}
     engines: {node: ^14.21.3 || >=16}
 
+  '@noble/curves@1.2.0':
+    resolution: {integrity: sha512-oYclrNgRaM9SsBUBVbb8M6DTV7ZHRTKugureoYEncY5c65HOmRzvSiTE3y5CYaPYJA/GVkrhXEoF0M3Ya9PMnw==}
+
   '@noble/curves@1.4.2':
     resolution: {integrity: sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==}
 
@@ -636,6 +648,10 @@ packages:
   '@noble/curves@1.9.7':
     resolution: {integrity: sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==}
     engines: {node: ^14.21.3 || >=16}
+
+  '@noble/hashes@1.3.2':
+    resolution: {integrity: sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ==}
+    engines: {node: '>= 16'}
 
   '@noble/hashes@1.4.0':
     resolution: {integrity: sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==}
@@ -1479,6 +1495,9 @@ packages:
   '@types/node@20.19.19':
     resolution: {integrity: sha512-pb1Uqj5WJP7wrcbLU7Ru4QtA0+3kAXrkutGiD26wUKzSMgNNaPARTUDQmElUXp64kh3cWdou3Q0C7qwwxqSFmg==}
 
+  '@types/node@22.7.5':
+    resolution: {integrity: sha512-jML7s2NAzMWc//QSJ1a3prpk78cOPchGvXJsC3C6R6PSMoooztvRVQEz89gmBTBY1SPMaqo5teB4uNHPdetShQ==}
+
   '@types/react-dom@19.2.0':
     resolution: {integrity: sha512-brtBs0MnE9SMx7px208g39lRmC5uHZs96caOJfTjFcYSLHNamvaSMfJNagChVNkup2SdtOxKX1FDBkRSJe1ZAg==}
     peerDependencies:
@@ -1805,6 +1824,9 @@ packages:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  aes-js@4.0.0-beta.5:
+    resolution: {integrity: sha512-G965FqalsNyrPqgEGON7nIx1e/OVENSgiEIzyC63haUMuvNnwIgIjMs52hlTCKhkBny7A2ORNlfY9Zu+jmGk1Q==}
 
   agentkeepalive@4.6.0:
     resolution: {integrity: sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ==}
@@ -2419,6 +2441,10 @@ packages:
 
   ethereum-cryptography@2.2.1:
     resolution: {integrity: sha512-r/W8lkHSiTLxUxW8Rf3u4HGB0xQweG2RyETjywylKZSzLWoWAijRz8WCuOtJ6wah+avllXBqZuk29HCCvhEIRg==}
+
+  ethers@6.14.0:
+    resolution: {integrity: sha512-KgHwltNSMdbrGWEyKkM0Rt2s+u1nDH/5BVDQakLinzGEJi4bWindBzZSCC4gKsbZjwDTI6ex/8suR9Ihbmz4IQ==}
+    engines: {node: '>=14.0.0'}
 
   eventemitter2@6.4.9:
     resolution: {integrity: sha512-JEPTiaOt9f04oa6NOkc4aH+nVp5I3wEjpHbIPqfgCdD5v5bUzy7xQqwcVO2aDQgOWhI28da57HksMrzK9HlRxg==}
@@ -3663,6 +3689,9 @@ packages:
   tslib@1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
 
+  tslib@2.7.0:
+    resolution: {integrity: sha512-gLXCKdN1/j47AiHiOkJN69hJmcbGTHI0ImLmbYLHykhgeN0jVGola9yVjFgzCUklsZQMW55o+dW7IXv3RCXDzA==}
+
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
@@ -3703,6 +3732,9 @@ packages:
 
   uncrypto@0.1.3:
     resolution: {integrity: sha512-Ql87qFHB3s/De2ClA9e0gsnS6zXG27SkTiSJwjCc9MebbfapQfuPzumMIUMi38ezPZVNFcHI9sUIepeQfw8J8Q==}
+
+  undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
@@ -3825,6 +3857,10 @@ packages:
 
   util@0.12.5:
     resolution: {integrity: sha512-kZf/K6hEIrWHI6XqOFUiiMa+79wE/D8Q+NCNAWclkyg3b4d2k7s0QGepNjiABc+aR3N1PAyHL7p6UcLY6LmrnA==}
+
+  uuid@13.0.0:
+    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
+    hasBin: true
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
@@ -4061,6 +4097,8 @@ packages:
         optional: true
 
 snapshots:
+
+  '@adraffy/ens-normalize@1.10.1': {}
 
   '@adraffy/ens-normalize@1.11.1': {}
 
@@ -4650,6 +4688,10 @@ snapshots:
 
   '@noble/ciphers@1.3.0': {}
 
+  '@noble/curves@1.2.0':
+    dependencies:
+      '@noble/hashes': 1.3.2
+
   '@noble/curves@1.4.2':
     dependencies:
       '@noble/hashes': 1.4.0
@@ -4669,6 +4711,8 @@ snapshots:
   '@noble/curves@1.9.7':
     dependencies:
       '@noble/hashes': 1.8.0
+
+  '@noble/hashes@1.3.2': {}
 
   '@noble/hashes@1.4.0': {}
 
@@ -5672,7 +5716,7 @@ snapshots:
 
   '@scure/bip32@1.7.0':
     dependencies:
-      '@noble/curves': 1.9.1
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/base': 1.2.6
 
@@ -5814,6 +5858,10 @@ snapshots:
   '@types/node@20.19.19':
     dependencies:
       undici-types: 6.21.0
+
+  '@types/node@22.7.5':
+    dependencies:
+      undici-types: 6.19.8
 
   '@types/react-dom@19.2.0(@types/react@19.2.1)':
     dependencies:
@@ -6617,6 +6665,8 @@ snapshots:
 
   acorn@8.15.0: {}
 
+  aes-js@4.0.0-beta.5: {}
+
   agentkeepalive@4.6.0:
     dependencies:
       humanize-ms: 1.2.1
@@ -7193,8 +7243,8 @@ snapshots:
       '@typescript-eslint/parser': 8.46.0(eslint@9.37.0)(typescript@5.9.3)
       eslint: 9.37.0
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.37.0)
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.37.0)
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint@9.37.0))(eslint@9.37.0)
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint@9.37.0))(eslint@9.37.0))(eslint@9.37.0)
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.37.0)
       eslint-plugin-react: 7.37.5(eslint@9.37.0)
       eslint-plugin-react-hooks: 5.2.0(eslint@9.37.0)
@@ -7213,7 +7263,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.37.0):
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint@9.37.0))(eslint@9.37.0):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.3
@@ -7224,22 +7274,22 @@ snapshots:
       tinyglobby: 0.2.15
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.37.0)
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint@9.37.0))(eslint@9.37.0))(eslint@9.37.0)
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.37.0))(eslint@9.37.0):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint@9.37.0))(eslint@9.37.0))(eslint@9.37.0):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 8.46.0(eslint@9.37.0)(typescript@5.9.3)
       eslint: 9.37.0
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.37.0)
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint@9.37.0))(eslint@9.37.0)
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.37.0):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint@9.37.0))(eslint@9.37.0))(eslint@9.37.0):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
@@ -7250,7 +7300,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.37.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.37.0))(eslint@9.37.0)
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0)(typescript@5.9.3))(eslint@9.37.0))(eslint@9.37.0))(eslint@9.37.0)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -7413,6 +7463,19 @@ snapshots:
       '@noble/hashes': 1.4.0
       '@scure/bip32': 1.4.0
       '@scure/bip39': 1.3.0
+
+  ethers@6.14.0(bufferutil@4.0.9)(utf-8-validate@5.0.10):
+    dependencies:
+      '@adraffy/ens-normalize': 1.10.1
+      '@noble/curves': 1.2.0
+      '@noble/hashes': 1.3.2
+      '@types/node': 22.7.5
+      aes-js: 4.0.0-beta.5
+      tslib: 2.7.0
+      ws: 8.17.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   eventemitter2@6.4.9: {}
 
@@ -8104,8 +8167,8 @@ snapshots:
   ox@0.6.7(typescript@5.9.3)(zod@4.1.12):
     dependencies:
       '@adraffy/ens-normalize': 1.11.1
-      '@noble/curves': 1.8.1
-      '@noble/hashes': 1.7.1
+      '@noble/curves': 1.9.7
+      '@noble/hashes': 1.8.0
       '@scure/bip32': 1.6.2
       '@scure/bip39': 1.5.4
       abitype: 1.0.8(typescript@5.9.3)(zod@4.1.12)
@@ -8789,6 +8852,8 @@ snapshots:
 
   tslib@1.14.1: {}
 
+  tslib@2.7.0: {}
+
   tslib@2.8.1: {}
 
   type-check@0.4.0:
@@ -8844,6 +8909,8 @@ snapshots:
       which-boxed-primitive: 1.1.1
 
   uncrypto@0.1.3: {}
+
+  undici-types@6.19.8: {}
 
   undici-types@6.21.0: {}
 
@@ -8933,6 +9000,8 @@ snapshots:
       is-generator-function: 1.1.2
       is-typed-array: 1.1.15
       which-typed-array: 1.1.19
+
+  uuid@13.0.0: {}
 
   uuid@8.3.2: {}
 

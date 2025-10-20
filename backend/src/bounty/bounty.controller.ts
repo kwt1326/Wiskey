@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Get,
-  Query,
-  Param,
-  Req,
-  Logger,
-} from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, Param, Req } from '@nestjs/common';
 import { BountyService } from './bounty.service';
 import { CreateBountyDto } from './dto/create-bounty.dto';
 import { ApiTags, ApiQuery } from '@nestjs/swagger';

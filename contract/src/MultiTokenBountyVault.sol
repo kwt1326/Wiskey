@@ -6,8 +6,9 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
- * @title MultiTokenBountyVault (OpenZeppelin v5 Compatible)
+ * @title MultiTokenBountyVault (string bountyId 지원 버전)
  * @notice ETH 및 ERC20(USDC, BNB 등)을 바운티별로 예치하고 동적 비율로 분배하는 컨트랙트
+ * @dev 외부에서는 string bountyId 사용, 내부에서는 bytes32 해시로 관리
  */
 contract MultiTokenBountyVault is ReentrancyGuard, Ownable {
     enum TokenType { ETH, ERC20 }
@@ -23,11 +24,12 @@ contract MultiTokenBountyVault is ReentrancyGuard, Ownable {
         bool distributed;
     }
 
-    mapping(uint256 => Bounty) public bounties;
+    // bytes32(bountyId hash) → Bounty
+    mapping(bytes32 => Bounty) public bounties;
     address public operator;
 
     event Deposited(
-        uint256 indexed bountyId,
+        string bountyId,
         TokenType tokenType,
         address tokenAddress,
         address indexed depositor,
@@ -37,33 +39,38 @@ contract MultiTokenBountyVault is ReentrancyGuard, Ownable {
     );
 
     event Distributed(
-        uint256 indexed bountyId,
+        string bountyId,
         address indexed solver,
         uint256 solverAmount,
         uint256 operatorAmount
     );
 
-    /**
-     * @dev Ownable v5 생성자 방식 반영
-     */
     constructor(address _operator, address _initialOwner) Ownable(_initialOwner) {
         require(_operator != address(0), "Invalid operator");
         operator = _operator;
     }
 
     /**
-     * @dev ETH 예치 (무기한 보관)
+     * @dev 내부 헬퍼: 문자열을 bytes32로 변환
+     */
+    function _toKey(string memory bountyId) internal pure returns (bytes32) {
+        return keccak256(abi.encodePacked(bountyId));
+    }
+
+    /**
+     * @dev ETH 예치
      */
     function depositETH(
-        uint256 bountyId,
+        string memory bountyId,
         uint8 solverShare,
         uint8 operatorShare
     ) external payable nonReentrant {
+        bytes32 key = _toKey(bountyId);
         require(msg.value > 0, "No ETH sent");
-        require(bounties[bountyId].totalAmount == 0, "Already deposited");
+        require(bounties[key].totalAmount == 0, "Already deposited");
         require(solverShare + operatorShare == 100, "Invalid ratio");
 
-        bounties[bountyId] = Bounty({
+        bounties[key] = Bounty({
             tokenType: TokenType.ETH,
             tokenAddress: address(0),
             totalAmount: msg.value,
@@ -78,24 +85,25 @@ contract MultiTokenBountyVault is ReentrancyGuard, Ownable {
     }
 
     /**
-     * @dev ERC20 (예: USDC, BNB Chain의 토큰) 예치
+     * @dev ERC20 예치
      */
     function depositToken(
-        uint256 bountyId,
+        string memory bountyId,
         address token,
         uint256 amount,
         uint8 solverShare,
         uint8 operatorShare
     ) external nonReentrant {
+        bytes32 key = _toKey(bountyId);
         require(token != address(0), "Invalid token");
         require(amount > 0, "Invalid amount");
-        require(bounties[bountyId].totalAmount == 0, "Already deposited");
+        require(bounties[key].totalAmount == 0, "Already deposited");
         require(solverShare + operatorShare == 100, "Invalid ratio");
 
         bool ok = IERC20(token).transferFrom(msg.sender, address(this), amount);
         require(ok, "Token transfer failed");
 
-        bounties[bountyId] = Bounty({
+        bounties[key] = Bounty({
             tokenType: TokenType.ERC20,
             tokenAddress: token,
             totalAmount: amount,
@@ -110,10 +118,11 @@ contract MultiTokenBountyVault is ReentrancyGuard, Ownable {
     }
 
     /**
-     * @dev 운영자가 언제든 분배를 트리거 가능
+     * @dev 운영자 분배
      */
-    function distribute(uint256 bountyId, address solver) external onlyOwner nonReentrant {
-        Bounty storage bounty = bounties[bountyId];
+    function distribute(string memory bountyId, address solver) external onlyOwner nonReentrant {
+        bytes32 key = _toKey(bountyId);
+        Bounty storage bounty = bounties[key];
         require(!bounty.distributed, "Already distributed");
         require(bounty.totalAmount > 0, "No bounty");
         require(solver != address(0), "Invalid solver");

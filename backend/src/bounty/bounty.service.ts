@@ -20,7 +20,7 @@ export class BountyService {
     const bounty = this.bountyRepository.create({
       title: dto.title,
       content: dto.content,
-      rewardEth: dto.rewardEth.toString(),
+      rewardEth: dto.rewardEth,
       rewardTxHash: dto.rewardTxHash, // 프론트가 전달
       vaultBountyId: dto.vaultBountyId, // 프론트가 Vault에서 받은 bountyId
       creator: user,
@@ -89,7 +89,7 @@ export class BountyService {
 
   /** 내가 답변한 바운티 */
   async getAnsweredBounties(wallet: string): Promise<BountySummaryDto[]> {
-    const user = await this.userService.findOrCreate({
+    await this.userService.findOrCreate({
       walletAddress: wallet,
     });
 
@@ -119,10 +119,12 @@ export class BountyService {
       views: b.views,
       answerCount: (b as any).answerCount ?? b.answers?.length ?? 0,
       winnerCount: (b as any).winnerCount ?? 0,
-      totalRewardEth: b.rewardEth.toString(),
+      totalRewardEth: b.rewardEth,
       remainingTime,
       createdAt: b.createdAt,
+      expiresAt: b.expiresAt,
       status: b.status,
+      vaultBountyId: b.vaultBountyId ?? '-',
     };
   }
 

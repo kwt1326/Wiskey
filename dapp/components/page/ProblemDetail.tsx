@@ -102,7 +102,6 @@ export function ProblemDetail({ bountyId }: ProblemDetailProps) {
     
     try {
       await createAnswerMutation.mutateAsync({
-        walletAddress: auth.userWallet,
         content: answerContent,
         bountyId: parseInt(bountyId)
       });
@@ -304,7 +303,7 @@ export function ProblemDetail({ bountyId }: ProblemDetailProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {bounty.answers?.map((answer) => (
+            {bounty.answers?.map((answer: any) => (
               <div
                 key={answer.id}
                 className={`p-4 rounded-lg border ${

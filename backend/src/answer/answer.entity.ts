@@ -1,10 +1,11 @@
 import { BaseEntity } from '../common/base.entity';
 import { Bounty } from '../bounty/bounty.entity';
 import { User } from '../user/user.entity';
-import { Entity, Column, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToOne, Unique } from 'typeorm';
 import { AnswerStatus } from '../common/types';
 
 @Entity('answers')
+@Unique(['author', 'bounty'])
 export class Answer extends BaseEntity {
   @Column({ name: 'content', type: 'text' })
   content: string;

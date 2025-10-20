@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Award, Lock, CheckCircle } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -18,32 +18,40 @@ import {
 } from '../ui/alertDialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useCreateBounty } from '@/hooks/api/bounties';
+import BountyDeposit, { OnDepositSuccessPayload } from '../base/BountyDeposit';
 
 export function PostProblem() {
   const router = useRouter();
   const auth = useAuth();
   const createBountyMutation = useCreateBounty();
+
+  const isCreatingRef = useRef(false);
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [reward, setReward] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [createdBountyId, setCreatedBountyId] = useState<string | null>(null);
+  const [createdBountyId, setCreatedBountyId] = useState<number | null>(null);
 
-  const handleCreateBounty = async () => {
-    if (!title.trim() || !description.trim() || !reward || !auth.isAuthenticated || !auth.userWallet) return;
+  const isFormValid = !!(title.trim() && description.trim() && reward && parseFloat(reward) > 0 && auth.isAuthenticated && auth.userWallet)
 
+  const handleCreateBounty = async (payload: OnDepositSuccessPayload) => {
     try {
+      if (isCreatingRef.current || createdBountyId) return;
+      
+      if (!isFormValid) throw new Error("A form invalid")
+
+      isCreatingRef.current = true
+
       const result = await createBountyMutation.mutateAsync({
         title: title.trim(),
         content: description.trim(),
-        rewardEth: parseFloat(reward),
-        walletAddress: auth.userWallet!,
-        // These would come from blockchain integration
-        rewardTxHash: 'pending', // Would be actual tx hash
-        vaultBountyId: 'pending' // Would be actual vault ID
+        rewardEth: payload.rewardEth,
+        rewardTxHash: payload.txHash, // Would be actual tx hash
+        vaultBountyId: payload.vaultBountyId // Would be actual vault ID
       });
       
-      setCreatedBountyId(result.id.toString());
+      setCreatedBountyId(result.id)
       setShowSuccessModal(true);
       
       // Reset form
@@ -64,8 +72,6 @@ export function PostProblem() {
       router.push('/');
     }
   };
-
-  const isFormValid = title.trim() && description.trim() && reward && parseFloat(reward) > 0 && auth.isAuthenticated;
 
   return (
     <div className="flex flex-1 flex-col min-h-0 w-full">
@@ -169,23 +175,14 @@ export function PostProblem() {
 
         {/* Action Button */}
         <div className="space-y-4 pb-6">
-          <Button
-            onClick={handleCreateBounty}
-            disabled={!isFormValid || createBountyMutation.isPending}
-            className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl py-4 text-lg font-semibold min-h-[56px] disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {createBountyMutation.isPending ? (
-              <div className="flex items-center space-x-3">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Creating Bounty...</span>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-3">
-                <Award className="h-6 w-6" />
-                <span>Create Bounty</span>
-              </div>
-            )}
-          </Button>
+          <BountyDeposit
+            rewardEth={reward}
+            title={title}
+            description={description}
+            userWallet={auth.userWallet || null}
+            onDepositSuccess={handleCreateBounty}
+            isFormValid={isFormValid}
+          />
 
           {/* Fee Info */}
           <div className="text-center text-slate-500">

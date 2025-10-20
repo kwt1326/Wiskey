@@ -19,7 +19,7 @@ export class Bounty extends BaseEntity {
   @Column({ name: 'reward_tx_hash', nullable: true })
   rewardTxHash?: string; // 프론트에서 전달받은 예치 트랜잭션 해시
 
-  @Column({ name: 'vault_bounty_id', nullable: true })
+  @Column({ name: 'vault_bounty_id', unique: true, nullable: true })
   vaultBountyId?: string; // 컨트랙트 상의 바운티 ID (distribute 시 필요)
 
   @Column({ name: 'views', default: 0 })
