@@ -16,9 +16,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../ui/alertDialog';
+import BountyDeposit, { OnDepositSuccessPayload } from '../base/BountyDeposit';
 import { useAuth } from '@/hooks/useAuth';
 import { useCreateBounty } from '@/hooks/api/bounties';
-import BountyDeposit, { OnDepositSuccessPayload } from '../base/BountyDeposit';
 
 export function PostProblem() {
   const router = useRouter();
@@ -54,13 +54,11 @@ export function PostProblem() {
       setCreatedBountyId(result.id)
       setShowSuccessModal(true);
       
-      // Reset form
       setTitle('');
       setDescription('');
       setReward('');
     } catch (error) {
       console.error('Failed to create bounty:', error);
-      // Could add toast notification here
     }
   };
 

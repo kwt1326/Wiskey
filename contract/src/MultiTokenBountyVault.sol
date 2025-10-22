@@ -5,6 +5,8 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+import "../lib/forge-std/src/console.sol";
+
 /**
  * @title MultiTokenBountyVault (string bountyId 지원 버전)
  * @notice ETH 및 ERC20(USDC, BNB 등)을 바운티별로 예치하고 동적 비율로 분배하는 컨트랙트
@@ -117,34 +119,132 @@ contract MultiTokenBountyVault is ReentrancyGuard, Ownable {
         emit Deposited(bountyId, TokenType.ERC20, token, msg.sender, amount, solverShare, operatorShare);
     }
 
-    /**
-     * @dev 운영자 분배
-     */
-    function distribute(string memory bountyId, address solver) external onlyOwner nonReentrant {
+    // /**
+    //  * @dev 운영자 분배
+    //  */
+    // function distribute(string memory bountyId, address solver) external onlyOwner nonReentrant {
+    //     bytes32 key = _toKey(bountyId);
+    //     Bounty storage bounty = bounties[key];
+
+    //     console.log("bountyId:", bountyId);
+    //     console.logBytes32(key);
+    //     console.logAddress(solver);
+
+    //     console.log("distributed:", bounty.distributed, !bounty.distributed);
+    //     console.log("totalAmount:", bounty.totalAmount, bounty.totalAmount > 0);
+    //     console.log("valid Address:", solver, address(0), solver != address(0));
+
+    //     require(!bounty.distributed, "Already distributed");
+    //     require(bounty.totalAmount > 0, "No bounty");
+    //     require(solver != address(0), "Invalid solver");
+
+    //     uint256 solverAmount = (bounty.totalAmount * bounty.solverShare) / 100;
+    //     uint256 operatorAmount = (bounty.totalAmount * bounty.operatorShare) / 100;
+
+    //     bounty.solver = solver;
+    //     bounty.distributed = true;
+
+    //     console.log("distributed Addresses:", solver, operator);
+
+    //     if (bounty.tokenType == TokenType.ETH) {
+    //         (bool s1, ) = solver.call{value: solverAmount}("");
+    //         (bool s2, ) = operator.call{value: operatorAmount}("");
+    //         require(s1 && s2, "ETH transfer failed");
+    //     } else {
+    //         IERC20 token = IERC20(bounty.tokenAddress);
+    //         bool s1 = token.transfer(solver, solverAmount);
+    //         bool s2 = token.transfer(operator, operatorAmount);
+    //         require(s1 && s2, "Token transfer failed");
+    //     }
+
+    //     emit Distributed(bountyId, solver, solverAmount, operatorAmount);
+    // }
+
+    // 🧩 디버깅용 이벤트들
+    event DebugLog(string message);
+    event DebugUint(string label, uint256 value);
+    event DebugAddress(string label, address value);
+    event DebugBytes32(string label, bytes32 value);
+    event DebugBool(string label, bool value);
+
+    // 🔧 디버깅 헬퍼들
+    function _debug(string memory message) internal {
+        emit DebugLog(message);
+    }
+
+    function _debugUint(string memory label, uint256 value) internal {
+        emit DebugUint(label, value);
+    }
+
+    function _debugAddress(string memory label, address value) internal {
+        emit DebugAddress(label, value);
+    }
+
+    function _debugBytes32(string memory label, bytes32 value) internal {
+        emit DebugBytes32(label, value);
+    }
+
+    function _debugBool(string memory label, bool value) internal {
+        emit DebugBool(label, value);
+    }
+
+    // 🧠 디버깅 로깅 추가 버전 distribute()
+    function distribute(
+        string memory bountyId,
+        address solver
+    ) external onlyOwner nonReentrant {
+        _debug("ENTER distribute()");
+        _debugBytes32("bountyKey", _toKey(bountyId));
+        _debugAddress("solverParam", solver);
+
         bytes32 key = _toKey(bountyId);
         Bounty storage bounty = bounties[key];
+
+        // --- 조건 확인 ---
+        _debugBool("bounty.distributed", bounty.distributed);
         require(!bounty.distributed, "Already distributed");
+
+        _debugUint("bounty.totalAmount", bounty.totalAmount);
         require(bounty.totalAmount > 0, "No bounty");
+
+        _debugAddress("bounty.tokenAddress", bounty.tokenAddress);
+        _debugUint("solverShare", bounty.solverShare);
+        _debugUint("operatorShare", bounty.operatorShare);
+
         require(solver != address(0), "Invalid solver");
 
+        // --- 금액 계산 ---
         uint256 solverAmount = (bounty.totalAmount * bounty.solverShare) / 100;
         uint256 operatorAmount = (bounty.totalAmount * bounty.operatorShare) / 100;
 
+        _debugUint("solverAmount", solverAmount);
+        _debugUint("operatorAmount", operatorAmount);
+
+        // --- 상태 변경 ---
         bounty.solver = solver;
         bounty.distributed = true;
 
+        // --- 토큰 분배 ---
         if (bounty.tokenType == TokenType.ETH) {
+            _debug("distribute: ETH mode");
             (bool s1, ) = solver.call{value: solverAmount}("");
             (bool s2, ) = operator.call{value: operatorAmount}("");
+            _debugBool("s1", s1);
+            _debugBool("s2", s2);
             require(s1 && s2, "ETH transfer failed");
         } else {
+            _debug("distribute: ERC20 mode");
             IERC20 token = IERC20(bounty.tokenAddress);
             bool s1 = token.transfer(solver, solverAmount);
             bool s2 = token.transfer(operator, operatorAmount);
+            _debugBool("s1", s1);
+            _debugBool("s2", s2);
             require(s1 && s2, "Token transfer failed");
         }
 
+        // --- 완료 ---
         emit Distributed(bountyId, solver, solverAmount, operatorAmount);
+        _debug("EXIT distribute() success [v]");
     }
 
     /**

@@ -1,5 +1,3 @@
-import contract from "@/contracts/MultiTokenBountyVault.json" assert { type: "json" };
-
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Transaction,
@@ -8,11 +6,13 @@ import {
   TransactionStatusLabel,
 } from "@coinbase/onchainkit/transaction";
 import type { LifecycleStatus, TransactionResponseType } from "@coinbase/onchainkit/transaction";
+import { APIError } from "@coinbase/onchainkit/api";
 import { base } from "wagmi/chains";
 import { ethers } from "ethers";
 import { Award } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
-import { APIError } from "@coinbase/onchainkit/api";
+
+import contract from "@/contracts/MultiTokenBountyVault.json" assert { type: "json" };
 
 export type OnDepositSuccessPayload = {
   txHash: string;
@@ -29,14 +29,14 @@ type Props = {
   operatorShare?: number;
   title: string;
   description: string;
-  userWallet?: string | null; // 지갑 주소, 없으면 미연결로 간주
-  isFormValid: boolean;       // 부모에서 입력 검증 결과
+  userWallet?: string | null;
+  isFormValid: boolean;
   isSponsored?: boolean;
   onDepositSuccess: (payload: OnDepositSuccessPayload) => Promise<void> | void;
 };
 
-const VAULT_ADDRESS = (process.env.NEXT_PUBLIC_VAULT_ADDRESS || '0x0000') as `0x${string}`
-const ANVIL_CHAIN_ID = 31337
+const VAULT_ADDRESS = (process.env.NEXT_PUBLIC_VAULT_ADDRESS || '0x0000') as `0x${string}`;
+const ANVIL_CHAIN_ID = 31337;
 
 export default function BountyDeposit({
   rewardEth,
@@ -49,7 +49,7 @@ export default function BountyDeposit({
   isSponsored = false,
   onDepositSuccess,
 }: Props) {
-  const iface = useMemo(() => new ethers.Interface(contract.abi), [contract.abi]);
+  const iface = useMemo(() => new ethers.Interface(contract.abi), []);
   const lastBountyIdRef = useRef<string | null>(null);
   
   const [status, setStatus] = useState<string>('init');
@@ -57,8 +57,8 @@ export default function BountyDeposit({
 
   const chainId = useMemo(
     () => process.env.NEXT_PUBLIC_ENVIRONMENT === 'local' ? ANVIL_CHAIN_ID : base.id,
-    [process.env.NEXT_PUBLIC_ENVIRONMENT]
-  )
+    []
+  );
 
   const calls = async () => {
     if (!userWallet) {
@@ -70,33 +70,34 @@ export default function BountyDeposit({
     if (solverShare + operatorShare !== 100) {
       throw new Error("Invalid ratio");
     }
-    // if (rewardEth <= 0) {
-    //   throw new Error("Reward must be greater than 0");
-    // }
+
     const bountyId = uuidv4();
     lastBountyIdRef.current = bountyId;
 
     const value = ethers.parseEther(rewardEth);
     const data = iface.encodeFunctionData("depositETH", [bountyId, solverShare, operatorShare]);
+    
     return [{ to: VAULT_ADDRESS, data: data as `0x${string}`, value }];
   };
 
-  const handleOnStatus = useCallback((status: LifecycleStatus) => setStatus(status.statusName), []);
+  const handleOnStatus = useCallback((status: LifecycleStatus) => {
+    setStatus(status.statusName);
+  }, []);
 
-  const handleOnError = useCallback((error: APIError) => console.error("TransactionError: ", error), [])
+  const handleOnError = useCallback((error: APIError) => {
+    console.error("TransactionError: ", error);
+  }, []);
 
   const handleOnSuccess = async (response: TransactionResponseType) => {
     try {
-      if (status !== 'success' || isCalled) return
+      if (status !== 'success' || isCalled) return;
       
-      const vaultBountyId = lastBountyIdRef.current?.toString()
+      const vaultBountyId = lastBountyIdRef.current?.toString();
       
-      if (!vaultBountyId || !userWallet) throw new Error()
+      if (!vaultBountyId || !userWallet) throw new Error('Missing bountyId or wallet');
 
       const receipt = response.transactionReceipts[0];
       const txHash = receipt.transactionHash;
-
-      console.log('rerender?', receipt, txHash, vaultBountyId)
 
       await onDepositSuccess({
         txHash,
@@ -109,11 +110,11 @@ export default function BountyDeposit({
 
       setIsCalled(true);
     } catch (err) {
-      console.error(`handleOnSuccess Error : ${err}`)
+      console.error(`handleOnSuccess Error : ${err}`);
     }
-  }
+  };
 
-  // 버튼 라벨/동작 렌더
+  // Button render function (same as original)
   const renderButton = ({
     status,
     onSubmit,
@@ -122,9 +123,7 @@ export default function BountyDeposit({
     status: "default" | "success" | "error" | "pending";
     onSubmit: () => void;
     isDisabled: boolean;
-    // onSuccess, context 등 필요시 사용 가능
   }) => {
-    // 상태/조건에 따른 라벨 결정
     const walletConnected = !!userWallet;
     const baseDisabled = isDisabled || !walletConnected || !isFormValid;
 
@@ -152,7 +151,6 @@ export default function BountyDeposit({
         </div>
       );
     } else {
-      // 입력 준비됨 -> Create Bounty, 아니면 기본 라벨도 Create Bounty로 유지
       content = (
         <div className="flex items-center space-x-3">
           <Award className="h-6 w-6" />
@@ -173,19 +171,20 @@ export default function BountyDeposit({
   };
 
   return (
-    <Transaction
-      chainId={chainId}
-      calls={calls}
-      onStatus={handleOnStatus}
-      onSuccess={handleOnSuccess}
-      onError={handleOnError}
-      isSponsored={isSponsored}
-    >
-      <TransactionButton render={renderButton} />
-      <TransactionStatus>
-        <TransactionStatusLabel />
-      </TransactionStatus>
-    </Transaction>
+    <div>
+      <Transaction
+        chainId={chainId}
+        calls={calls}
+        onStatus={handleOnStatus}
+        onSuccess={handleOnSuccess}
+        onError={handleOnError}
+        isSponsored={isSponsored}
+      >
+        <TransactionButton render={renderButton} />
+        <TransactionStatus>
+          <TransactionStatusLabel />
+        </TransactionStatus>
+      </Transaction>
+    </div>
   );
 }
-

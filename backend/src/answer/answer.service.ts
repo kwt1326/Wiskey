@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Answer } from './answer.entity';
 import { CreateAnswerDto } from './dto/create-answer.dto';
-import { UserService } from '../user/user.service';
 import { Bounty } from '../bounty/bounty.entity';
 import { User } from '../user/user.entity';
 
@@ -14,7 +13,6 @@ export class AnswerService {
     private readonly answerRepository: Repository<Answer>,
     @InjectRepository(Bounty)
     private readonly bountyRepository: Repository<Bounty>,
-    private readonly userService: UserService,
   ) {}
 
   async create(dto: CreateAnswerDto, user: User) {

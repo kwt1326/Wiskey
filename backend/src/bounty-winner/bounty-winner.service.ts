@@ -17,6 +17,7 @@ export class BountyWinnerService {
     private readonly bountyRepository: Repository<Bounty>,
     @InjectRepository(Answer)
     private readonly answerRepository: Repository<Answer>,
+    private readonly vaultService: VaultService,
   ) {}
 
   async selectWinner(dto: SelectWinnerDto) {
@@ -42,17 +43,21 @@ export class BountyWinnerService {
     }
 
     try {
-      // Call contract distribute function (9:1 ratio - 90% to winner, 10% to operation wallet)
-      const receipt = await VaultService.distributeReward(
+      // Call contract distribute function with comprehensive logging
+      const result = await this.vaultService.distributeWithLogging(
         bounty.vaultBountyId,
         answer.author.walletAddress,
       );
+
+      if (!result.success) {
+        throw new Error(result.error || 'Distribution failed');
+      }
 
       // Create winner record
       const winner = this.winnerRepository.create({
         bounty,
         answer,
-        txHash: receipt.transactionHash,
+        txHash: result.txHash,
       });
 
       // Update bounty status to completed
@@ -68,8 +73,11 @@ export class BountyWinnerService {
 
       return {
         winner: savedWinner,
-        txHash: receipt.transactionHash,
-        gasUsed: receipt.gasUsed.toString(),
+        txHash: result.txHash,
+        gasUsed: result.gasUsed || '0',
+        solverAmount: result.solverAmount,
+        operatorAmount: result.operatorAmount,
+        blockNumber: result.blockNumber,
       };
     } catch (err) {
       throw new Error(

@@ -1,231 +1,358 @@
+/**
+ * Enhanced Vault Service with Comprehensive Logging
+ *
+ * Integrates the VaultLoggerService for detailed logging of distribute operations
+ */
+
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ethers } from 'ethers';
-import * as dotenv from 'dotenv';
+import { VaultLoggerService } from './vault-logger.service';
+import { NonceManagerService } from './nonce-manager.service';
 import contract from './contracts/MultiTokenBountyVault.json';
 
-dotenv.config();
-
-// export class VaultService {
-//   private static iface = new ethers.Interface(contract.abi);
-
-//   private static provider = new ethers.JsonRpcProvider(
-//     process.env.ETH_PROVIDER_URL,
-//   );
-//   private static wallet = new ethers.Wallet(
-//     process.env.ETH_PRIVATE_KEY!,
-//     this.provider,
-//   );
-//   private static contract = new ethers.Contract(
-//     process.env.VAULT_CONTRACT_ADDRESS!,
-//     this.iface,
-//     this.wallet,
-//   );
-
-//   static async distributeReward(bountyId: string, winnerAddress: string) {
-//     const tx = await this.contract.distribute(bountyId, winnerAddress);
-//     const receipt = await tx.wait();
-//     return receipt;
-//   }
-// }
-
-// VaultService.ts (ethers v6)
-
-type LogLevel = 'debug' | 'info' | 'warn' | 'error';
-interface Logger {
-  log: (
-    level: LogLevel,
-    message: string,
-    meta?: Record<string, unknown>,
-  ) => void;
+interface DistributeResult {
+  success: boolean;
+  txHash?: string;
+  solverAmount?: string;
+  operatorAmount?: string;
+  error?: string;
+  gasUsed?: string;
+  blockNumber?: number;
 }
 
-const defaultLogger: Logger = {
-  log(level, message, meta) {
-    const ts = new Date().toISOString();
-    const metaStr = meta ? safeStringify(meta) : '';
-    const fn =
-      level === 'error'
-        ? console.error
-        : level === 'warn'
-          ? console.warn
-          : level === 'info'
-            ? console.info
-            : console.debug;
-    fn(
-      `[VaultService] ${ts} ${level.toUpperCase()} ${message}${metaStr ? ' ' + metaStr : ''}`,
-    );
-  },
-};
+@Injectable()
+export class VaultService implements OnModuleInit {
+  private readonly logger = new Logger(VaultService.name);
+  private provider: ethers.Provider;
+  private wallet: ethers.Wallet;
+  private vaultContract: ethers.Contract;
+  private vaultAddress: string;
 
-function safeStringify(obj: unknown): string {
-  try {
-    return JSON.stringify(obj, (_k, v) => {
-      if (typeof v === 'bigint') return v.toString();
-      if (v instanceof Uint8Array) return Buffer.from(v).toString('hex');
-      return v;
-    });
-  } catch {
-    return '[unserializable]';
-  }
-}
-
-function maskUrl(url?: string) {
-  if (!url) return undefined;
-  try {
-    const u = new URL(url);
-    if (u.username) u.username = '***';
-    if (u.password) u.password = '***';
-    return u.toString();
-  } catch {
-    return url;
-  }
-}
-
-function normalizeError(error: unknown): Record<string, unknown> {
-  const e = error as any;
-  return {
-    name: e?.name,
-    code: e?.code,
-    reason: e?.reason,
-    shortMessage: e?.shortMessage,
-    message: typeof e?.message === 'string' ? e.message : undefined,
-    data: e?.data,
-    info: e?.info,
-    tx: e?.transaction,
-    receipt: e?.receipt,
-    stack:
-      typeof e?.stack === 'string'
-        ? e.stack.split('\n').slice(0, 4).join(' | ')
-        : undefined,
-  };
-}
-
-export class VaultService {
-  private static logger: Logger = defaultLogger;
-
-  static setLogger(logger: Logger) {
-    this.logger = logger;
+  constructor(
+    private readonly vaultLogger: VaultLoggerService,
+    private readonly nonceManager: NonceManagerService,
+  ) {
+    this.initializeProvider();
   }
 
-  private static iface = new ethers.Interface(contract.abi);
-  private static provider = new ethers.JsonRpcProvider(
-    process.env.ETH_PROVIDER_URL,
-  );
-  private static wallet = new ethers.Wallet(
-    process.env.ETH_PRIVATE_KEY!,
-    this.provider,
-  );
-  private static contract = new ethers.Contract(
-    process.env.VAULT_CONTRACT_ADDRESS!,
-    this.iface,
-    this.wallet,
-  );
-
-  static async initDiagnostics() {
-    const network = await this.provider.getNetwork();
-    const feeData = await this.provider.getFeeData();
-    const walletAddress = await this.wallet.getAddress();
-    this.logger.log('info', 'Initialized VaultService', {
-      rpcUrl: maskUrl(process.env.ETH_PROVIDER_URL),
-      contractAddress: process.env.VAULT_CONTRACT_ADDRESS,
-      walletAddress,
-      chainId: Number(network.chainId),
-      gasPrice: feeData.gasPrice?.toString(),
-      maxFeePerGas: feeData.maxFeePerGas?.toString(),
-      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas?.toString(),
-    });
+  async onModuleInit() {
+    await this.initializeLogging();
   }
 
-  // distribute(bountyId: string, solver: address)
-  static async distributeReward(bountyId: string, solver: string) {
-    const startTs = Date.now();
-    this.logger.log('info', 'distributeReward called', { bountyId, solver });
+  private initializeProvider(): void {
+    const rpcUrl = process.env.ETH_PROVIDER_URL || 'http://127.0.0.1:8545';
+    const privateKey = process.env.ETH_PRIVATE_KEY;
+    this.vaultAddress = process.env.VAULT_CONTRACT_ADDRESS || '';
 
-    try {
-      if (!bountyId || typeof bountyId === 'object')
-        throw new Error('Invalid bountyId');
-      if (!ethers.isAddress(solver))
-        throw new Error(`Invalid Ethereum address: ${solver}`);
-
-      const walletAddress = await this.wallet.getAddress();
-      const nonce = await this.provider.getTransactionCount(
-        walletAddress,
-        'pending',
+    if (!privateKey) {
+      throw new Error('ETH_PRIVATE_KEY environment variable is required');
+    }
+    if (!this.vaultAddress) {
+      throw new Error(
+        'VAULT_CONTRACT_ADDRESS environment variable is required',
       );
-      const feeData = await this.provider.getFeeData();
+    }
 
-      this.logger.log('debug', 'Pre-tx state', {
-        walletAddress,
-        nonce,
-        feeData: {
-          gasPrice: feeData.gasPrice?.toString(),
-          maxFeePerGas: feeData.maxFeePerGas?.toString(),
-          maxPriorityFeePerGas: feeData.maxPriorityFeePerGas?.toString(),
-        },
-      });
+    this.provider = new ethers.JsonRpcProvider(rpcUrl);
+    this.wallet = new ethers.Wallet(privateKey, this.provider);
+    this.loadVaultContract();
+  }
 
-      let gasEstimate: bigint | undefined;
-      try {
-        const estimate = await this.contract.distribute.estimateGas(
-          bountyId,
-          solver,
-        );
-        gasEstimate = BigInt(estimate.toString());
-        this.logger.log('debug', 'Gas estimated', {
-          gasEstimate: gasEstimate.toString(),
-        });
-      } catch (err) {
-        this.logger.log(
-          'warn',
-          'Gas estimation failed; sending without explicit gasLimit',
-          normalizeError(err),
-        );
+  private loadVaultContract(): void {
+    this.vaultContract = new ethers.Contract(
+      this.vaultAddress,
+      contract.abi,
+      this.wallet,
+    );
+  }
+
+  private async initializeLogging(): Promise<void> {
+    try {
+      this.vaultLogger.setProvider(this.provider);
+      this.vaultLogger.setVaultAddress(this.vaultAddress);
+
+      const code = await this.provider.getCode(this.vaultAddress);
+      let operatorAddress: string;
+
+      if (code === '0x') {
+        operatorAddress = process.env.OPERATOR_ADDRESS || this.wallet.address;
+      } else {
+        try {
+          operatorAddress = await this.vaultContract.operator();
+        } catch {
+          operatorAddress = this.wallet.address;
+        }
       }
 
-      this.logger.log('info', 'Sending tx: distribute', {
-        method: 'distribute',
-        args: { bountyId, solver },
-      });
+      this.vaultLogger.setOperatorAddress(operatorAddress);
 
-      const tx = await this.contract.distribute(bountyId, solver, {
-        // gasLimit: gasEstimate ? (gasEstimate * 110n) / 100n : undefined,
-        // maxFeePerGas: feeData.maxFeePerGas ?? undefined,
-        // maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? undefined,
-      });
-
-      this.logger.log('info', 'Tx sent', {
-        hash: tx.hash,
-        nonce: tx.nonce,
-        to: tx.to,
-        from: tx.from,
-        gasPrice: tx.gasPrice?.toString(),
-      });
-
-      const receipt = await tx.wait();
-
-      const durationMs = Date.now() - startTs;
-      this.logger.log('info', 'Tx mined', {
-        hash: receipt.transactionHash,
-        blockNumber: receipt.blockNumber,
-        status: receipt.status,
-        gasUsed: receipt.gasUsed?.toString(),
-        cumulativeGasUsed: receipt.cumulativeGasUsed?.toString(),
-        effectiveGasPrice: receipt.effectiveGasPrice?.toString(),
-        logsCount: receipt.logs?.length,
-        durationMs,
-      });
-
-      // ABI상 outputs 없고 이벤트 명시 없음 → 로그 디코딩은 생략하거나, 컨트랙트가 실제로 이벤트를 emit한다면 iface.parseLog로 추가
-      return receipt;
+      const network = await this.provider.getNetwork();
+      await this.vaultLogger.initializeSession(Number(network.chainId));
     } catch (error) {
-      const durationMs = Date.now() - startTs;
-      const normalized = normalizeError(error);
-      this.logger.log('error', 'distributeReward failed', {
-        ...normalized,
-        durationMs,
-        bountyId,
-        solver,
+      this.logger.error('❌ initializeLogging failed', {
+        error: String(error),
       });
-      throw error;
+      const fallbackOperator =
+        process.env.OPERATOR_ADDRESS || this.wallet.address;
+      this.vaultLogger.setOperatorAddress(fallbackOperator);
     }
+  }
+
+  /**
+   * Distribute bounty with comprehensive logging
+   */
+  async distributeWithLogging(
+    bountyId: string,
+    solverAddress: string,
+  ): Promise<DistributeResult> {
+    try {
+      // 🚀 Start distribution
+      this.vaultLogger.logDistributionStart({
+        bountyId,
+        solverAddress,
+        ownerAddress: this.wallet.address,
+      });
+
+      // 🔍 Validate preconditions
+      const validation =
+        await this.vaultLogger.validateDistributionPreconditions(
+          bountyId,
+          solverAddress,
+        );
+
+      if (!validation.valid) {
+        const errorMsg = `Validation failed: ${validation.errors.join(', ')}`;
+        this.vaultLogger.logDistributionError(
+          new Error(errorMsg),
+          bountyId,
+          solverAddress,
+        );
+        return { success: false, error: errorMsg };
+      }
+
+      // 💰 Capture state and execute transaction
+      const [bountyState] = await Promise.all([
+        this.vaultLogger.logBountyState(bountyId),
+        this.vaultLogger.captureBalanceSnapshot(
+          'Before Distribution',
+          solverAddress,
+        ),
+      ]);
+
+      if (!bountyState) throw new Error('Failed to get bounty state');
+
+      const distribution = this.vaultLogger.calculateDistribution(bountyState);
+
+      // 📤 Execute transaction with nonce management
+      const ownerNonce = await this.nonceManager.getNextNonce(
+        this.provider,
+        this.wallet.address,
+      );
+
+      const txPromise = this.vaultContract.distribute(bountyId, solverAddress, {
+        nonce: ownerNonce,
+      });
+
+      this.nonceManager.registerPendingTransaction(
+        this.wallet.address,
+        ownerNonce,
+        txPromise,
+      );
+
+      const tx = await txPromise;
+      this.vaultLogger.logTransactionSent(tx.hash, {
+        to: this.vaultAddress,
+        from: this.wallet.address,
+        nonce: tx.nonce,
+      });
+
+      // ⏳ Wait for confirmation and capture final state
+      const receipt = await tx.wait();
+      if (!receipt) throw new Error('Transaction receipt is null');
+
+      this.vaultLogger.logTransactionMined(receipt, bountyId);
+
+      await Promise.all([
+        this.vaultLogger.captureBalanceSnapshot(
+          'After Distribution',
+          solverAddress,
+        ),
+        this.vaultLogger.logBountyState(bountyId),
+      ]);
+
+      // 📊 Prepare result
+      const result: DistributeResult = {
+        success: true,
+        txHash: receipt.hash,
+        solverAmount: ethers.formatEther(distribution.solverAmount),
+        operatorAmount: ethers.formatEther(distribution.operatorAmount),
+        gasUsed: receipt.gasUsed?.toString(),
+        blockNumber: receipt.blockNumber,
+      };
+
+      this.vaultLogger.logDistributionSuccess({
+        txHash: receipt.hash,
+        bountyId,
+        solverAddress,
+        solverAmount:
+          result.solverAmount + (distribution.isETH ? ' ETH' : ' tokens'),
+        operatorAmount:
+          result.operatorAmount + (distribution.isETH ? ' ETH' : ' tokens'),
+      });
+
+      return result;
+    } catch (error) {
+      // ❌ Log comprehensive error details
+      this.vaultLogger.logDistributionError(error, bountyId, solverAddress);
+
+      this.logger.error('❌ Distribution failed', {
+        bountyId,
+        solverAddress,
+        error: String(error),
+      });
+
+      // Handle nonce errors with retry
+      if (this.isNonceError(error)) {
+        try {
+          await this.nonceManager.resetNonce(
+            this.provider,
+            this.wallet.address,
+          );
+          return this.distributeWithLogging(bountyId, solverAddress);
+        } catch (retryError) {
+          return {
+            success: false,
+            error: `Nonce error retry failed: ${String(retryError)}`,
+          };
+        }
+      }
+
+      return {
+        success: false,
+        error: String(error),
+      };
+    }
+  }
+
+  async getBountyInfo(bountyId: string): Promise<any> {
+    return await this.vaultLogger.logBountyState(bountyId);
+  }
+
+  async canDistribute(
+    bountyId: string,
+    solverAddress: string,
+  ): Promise<{
+    canDistribute: boolean;
+    reasons: string[];
+  }> {
+    try {
+      const validation =
+        await this.vaultLogger.validateDistributionPreconditions(
+          bountyId,
+          solverAddress,
+        );
+      return {
+        canDistribute: validation.valid,
+        reasons: validation.errors,
+      };
+    } catch (error) {
+      return {
+        canDistribute: false,
+        reasons: [String(error)],
+      };
+    }
+  }
+
+  async getVaultMetrics(): Promise<{
+    vaultBalance: string;
+    operatorAddress: string;
+    blockNumber: number;
+    networkName: string;
+  }> {
+    const [vaultBalance, operatorAddress, blockNumber, network] =
+      await Promise.all([
+        this.provider.getBalance(this.vaultAddress),
+        this.vaultContract.operator(),
+        this.provider.getBlockNumber(),
+        this.provider.getNetwork(),
+      ]);
+
+    return {
+      vaultBalance: ethers.formatEther(vaultBalance),
+      operatorAddress,
+      blockNumber,
+      networkName: network.name,
+    };
+  }
+
+  async healthCheck(): Promise<{
+    healthy: boolean;
+    details: Record<string, any>;
+  }> {
+    try {
+      const [blockNumber, operatorAddress, walletBalance, vaultBalance] =
+        await Promise.all([
+          this.provider.getBlockNumber(),
+          this.vaultContract.operator(),
+          this.provider.getBalance(this.wallet.address),
+          this.provider.getBalance(this.vaultAddress),
+        ]);
+
+      return {
+        healthy: true,
+        details: {
+          provider: { connected: true, blockNumber },
+          vault: { accessible: true, operator: operatorAddress },
+          wallet: {
+            address: this.wallet.address,
+            balance: ethers.formatEther(walletBalance),
+          },
+          vaultBalance: ethers.formatEther(vaultBalance),
+        },
+      };
+    } catch (error) {
+      return {
+        healthy: false,
+        details: { error: String(error) },
+      };
+    }
+  }
+
+  /**
+   * Check if error is nonce-related
+   */
+  private isNonceError(error: any): boolean {
+    const errorStr = String(error).toLowerCase();
+    return (
+      errorStr.includes('nonce too low') ||
+      errorStr.includes('nonce too high') ||
+      errorStr.includes('nonce has already been used') ||
+      errorStr.includes('replacement transaction underpriced') ||
+      errorStr.includes('already known')
+    );
+  }
+
+  /**
+   * Get nonce status for debugging
+   */
+  async getNonceStatus(): Promise<{
+    walletAddress: string;
+    blockchainNonce: number;
+    cachedNonce?: number;
+    pendingTxCount: number;
+    pendingNonces: number[];
+  }> {
+    const walletAddress = this.wallet.address;
+    const blockchainNonce = await this.provider.getTransactionCount(
+      walletAddress,
+      'pending',
+    );
+    const managerStatus = this.nonceManager.getNonceStatus(walletAddress);
+
+    return {
+      walletAddress,
+      blockchainNonce,
+      ...managerStatus,
+    };
   }
 }
