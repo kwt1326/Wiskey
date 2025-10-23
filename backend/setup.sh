@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Setting up Solve Backend API..."
+echo "🚀 Setting up wiskey Backend API..."
 
 # Check if Node.js is installed
 if ! command -v node &> /dev/null; then
@@ -30,12 +30,12 @@ fi
 # Check if PostgreSQL is running
 if ! command -v psql &> /dev/null; then
     echo "⚠️  PostgreSQL is not installed or not in PATH"
-    echo "   Please install PostgreSQL and create a database named 'solve'"
+    echo "   Please install PostgreSQL and create a database named 'wiskey'"
 else
     echo "✅ PostgreSQL found"
     
     # Try to create database (will fail if it already exists, which is fine)
-    createdb solve 2>/dev/null || echo "✅ Database 'solve' already exists or could not be created"
+    createdb wiskey 2>/dev/null || echo "✅ Database 'wiskey' already exists or could not be created"
 fi
 
 echo ""

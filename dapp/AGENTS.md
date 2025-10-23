@@ -1,14 +1,14 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- Active code lives in `solve-new/`; treat `solve/` and `Solve Mobile Prototype/` as read-only references.
-- Next.js routes reside in `solve-new/app/`. Co-locate feature-specific components alongside their screens.
-- Shared UI primitives and the `cn` helper sit in `solve-new/components/ui/`; reuse them before adding new abstractions.
-- Styles are consolidated in `solve-new/styles/`. Extend utility classes there instead of scattering inline overrides.
+- Active code lives in `wiskey-new/`; treat `wiskey/` and `Solve Mobile Prototype/` as read-only references.
+- Next.js routes reside in `wiskey-new/app/`. Co-locate feature-specific components alongside their screens.
+- Shared UI primitives and the `cn` helper sit in `wiskey-new/components/ui/`; reuse them before adding new abstractions.
+- Styles are consolidated in `wiskey-new/styles/`. Extend utility classes there instead of scattering inline overrides.
 - Place component tests beside their source (`Component.test.tsx`) or inside a `__tests__/` folder near the implementation.
 
 ## Build, Test, and Development Commands
-- `npm install` (run once inside `solve-new/`) installs dependencies.
+- `npm install` (run once inside `wiskey-new/`) installs dependencies.
 - `npm run dev` launches the mobile-frame Next.js dev server.
 - `npm run build` creates the production bundle; follow with `npm run start` for a smoke check.
 - `npm run lint` enforces TypeScript strictness and repository conventions; run it before every PR.

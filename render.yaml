@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: solve
+    name: wiskey
     runtime: static
     rootDir: dapp
     branch: main
@@ -13,7 +13,7 @@ services:
         - "**/*.test.tsx"
 
   - type: web
-    name: solve-api
+    name: wiskey-api
     runtime: node
     plan: free
     rootDir: backend

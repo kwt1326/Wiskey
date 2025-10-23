@@ -1,2 +1,2 @@
-# Solve
-The Solve app is a base mini app
+# wiskey
+The wiskey app is a base mini app

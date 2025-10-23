@@ -73,7 +73,7 @@ export function Home() {
               <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-lg">S3</span>
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Solve</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">wiskey</h1>
             </div>
             
             <WalletConnector onConnect={auth.connectWallet}/>

@@ -29,8 +29,8 @@ async function bootstrap() {
 
   // Swagger configuration
   const config = new DocumentBuilder()
-    .setTitle('Solve API')
-    .setDescription('API documentation for the Solve bounty platform')
+    .setTitle('wiskey API')
+    .setDescription('API documentation for the wiskey bounty platform')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
@@ -45,7 +45,7 @@ async function bootstrap() {
   const port = configService.get('PORT', 3001);
   await app.listen(port);
 
-  console.log(`🚀 Solve API is running on: http://localhost:${port}/api`);
+  console.log(`🚀 wiskey API is running on: http://localhost:${port}/api`);
   console.log(
     `📖 Swagger documentation is available at: http://localhost:${port}/api/docs`,
   );

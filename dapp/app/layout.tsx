@@ -17,9 +17,9 @@ const sourceCodePro = Source_Code_Pro({
 });
 
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Solve",
+  title: process.env.NEXT_PUBLIC_PROJECT_NAME ?? "wiskey",
   description:
-    "Solve experimental mobile-first bounty experience built with Next.js.",
+    "wiskey experimental mobile-first bounty experience built with Next.js.",
 };
 
 export default function RootLayout({

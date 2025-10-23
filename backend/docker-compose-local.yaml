@@ -6,7 +6,7 @@ services:
   #   build:
   #     context: .
   #     args:
-  #       - ARG_APP_NAME=solve-api-app
+  #       - ARG_APP_NAME=wiskey-api-app
   #   ports:
   #     - "8080:8080"
   #   depends_on:
@@ -16,7 +16,7 @@ services:
   #     - DB_PORT=5432
   #     - DB_USERNAME=postgres
   #     - DB_PASSWORD=password
-  #     - DB_NAME=solve
+  #     - DB_NAME=wiskey
   #     - NODE_ENV=development
   #   networks:
   #     - backend
