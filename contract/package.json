@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "deploy:local": "npx hardhat ignition deploy --network localhost --parameters module-parameters.json",
-    "deploy:baseSepolia": "npx hardhat ignition deploy --network baseSepolia --parameters module-parameters.json",
+    "deploy:hh:local": "npx hardhat ignition deploy --network localhost --parameters module-parameters.json",
+    "deploy:hh:baseSepolia": "npx hardhat ignition deploy --network baseSepolia --parameters module-parameters.json",
     "build": "hardhat build",
-    "test:flow": "npx ts-node scripts/test-bounty-vault-flow.ts",
-    "test:simple-flow": "npx ts-node scripts/test-simple-eth-flow.ts"
+    "test:flow": "npx ts-node scripts/test-flow.ts"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition": "^3.0.0",

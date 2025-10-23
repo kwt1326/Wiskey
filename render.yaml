@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: solve
+    runtime: static
+    rootDir: dapp
+    branch: main
+    buildCommand: pnpm install --no-frozen-lockfile && pnpm run build
+    staticPublishPath: out
+    buildFilter:
+      ignoredPaths:
+        - "**/*.test.js"
+        - "**/*.test.ts"
+        - "**/*.test.tsx"
+
+  - type: web
+    name: solve-api
+    runtime: node
+    rootDir: backend
+    branch: main
+    buildCommand: pnpm install --no-frozen-lockfile && pnpm run build
+    startCommand: pnpm run start:prod
+    healthCheckPath: /
+    buildFilter:
+      ignoredPaths:
+        - "**/*.spec.ts"
+        - "**/*.e2e-spec.ts"
+        - "test/**"
