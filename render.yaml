@@ -25,3 +25,6 @@ services:
         - "**/*.spec.ts"
         - "**/*.e2e-spec.ts"
         - "test/**"
+    envVars:
+      - key: NODE_ENV
+        value: development
