@@ -2,7 +2,6 @@ services:
   - type: web
     name: solve
     runtime: static
-    plan: free
     rootDir: dapp
     branch: main
     buildCommand: pnpm install --no-frozen-lockfile && pnpm run build
