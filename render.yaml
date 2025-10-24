@@ -20,7 +20,7 @@ services:
     branch: main
     buildCommand: pnpm install --no-frozen-lockfile && pnpm run build
     startCommand: pnpm run start:prod
-    healthCheckPath: /
+    healthCheckPath: /api/health
     buildFilter:
       ignoredPaths:
         - "**/*.spec.ts"
