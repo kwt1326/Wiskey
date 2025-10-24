@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
 import type { CSSProperties } from "react";
@@ -7,7 +8,9 @@ import { Toaster as Sonner, ToasterProps } from "sonner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
+  
   const toastStyles: CSSProperties = {
+    // @ts-ignore
     "--normal-bg": "var(--popover)",
     "--normal-text": "var(--popover-foreground)",
     "--normal-border": "var(--border)",

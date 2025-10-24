@@ -10,7 +10,7 @@ const Dialog = DialogPrimitive.Root;
 Dialog.displayName = "Dialog";
 
 const DialogTrigger = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Trigger>,
+  React.ComponentRef<typeof DialogPrimitive.Trigger>,
   React.ComponentProps<typeof DialogPrimitive.Trigger>
 >(({ ...props }, ref) => {
   return <DialogPrimitive.Trigger ref={ref} data-slot="dialog-trigger" {...props} />;
@@ -18,7 +18,7 @@ const DialogTrigger = React.forwardRef<
 DialogTrigger.displayName = "DialogTrigger";
 
 const DialogPortal = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Portal>,
+  React.ComponentRef<typeof DialogPrimitive.Portal>,
   React.ComponentProps<typeof DialogPrimitive.Portal>
 >(({ ...props }, _ref) => {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
@@ -26,7 +26,7 @@ const DialogPortal = React.forwardRef<
 DialogPortal.displayName = "DialogPortal";
 
 const DialogClose = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Close>,
+  React.ComponentRef<typeof DialogPrimitive.Close>,
   React.ComponentProps<typeof DialogPrimitive.Close>
 >(({ ...props }, ref) => {
   return <DialogPrimitive.Close ref={ref} data-slot="dialog-close" {...props} />;
@@ -34,7 +34,7 @@ const DialogClose = React.forwardRef<
 DialogClose.displayName = "DialogClose";
 
 const DialogOverlay = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Overlay>,
+  React.ComponentRef<typeof DialogPrimitive.Overlay>,
   React.ComponentProps<typeof DialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => {
   return (

@@ -246,7 +246,7 @@ export class DappVaultLogger {
     bountyId: string
   ): Promise<void> {
     const gasUsed = receipt.gasUsed;
-    const effectiveGasPrice = receipt.gasPrice || receipt.effectiveGasPrice;
+    const effectiveGasPrice = receipt.gasPrice;
     const txCost = gasUsed && effectiveGasPrice ? 
       ethers.formatEther(gasUsed * effectiveGasPrice) : 'unknown';
 
@@ -291,6 +291,7 @@ export class DappVaultLogger {
             }
           }
         } catch (e) {
+          console.error(e)
           // Skip non-contract logs
         }
       }
