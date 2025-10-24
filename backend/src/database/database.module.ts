@@ -9,7 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         url: configService.get<string>('DATABASE_URL'),
-        synchronize: configService.get('NODE_ENV') !== 'production',
+        synchronize: true, // configService.get('NODE_ENV') !== 'production',
         logging: configService.get('NODE_ENV') === 'development',
         autoLoadEntities: true,
       }),
