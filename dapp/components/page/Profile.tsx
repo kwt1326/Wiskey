@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
@@ -18,7 +18,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useMyPageStats, useRecentActivities } from '@/hooks';
 import { toast } from 'sonner';
 import PageMainWrapper from '../PageMainWrapper';
-import WalletConnector from '../base/WalletConnector';
+import WalletConnector from '../onchain/WalletConnector';
 import { ActivityType } from '@/lib/types/api';
 
 export function Profile() {
@@ -38,7 +38,6 @@ export function Profile() {
   const userBounties = stats?.bountyCount || 0;
   const userAnswers = stats?.answerCount || 0;
   const rewardsEarned = parseFloat(stats?.totalRewardEth || '0');
-  const _winCount = stats?.winCount || 0;
 
   const generateAvatar = (address: string) => {
     const colors = ['bg-emerald-400', 'bg-teal-400', 'bg-green-400', 'bg-cyan-400'];

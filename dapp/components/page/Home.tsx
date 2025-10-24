@@ -18,7 +18,7 @@ import { MobileBottomSection, MOBILE_BOTTOM_SECTION_PADDING } from '../MobileBot
 import { useAuth } from '@/hooks/useAuth';
 import { useBounties } from '@/hooks/api/bounties';
 import PageMainWrapper from '../PageMainWrapper';
-import WalletConnector from '../base/WalletConnector';
+import WalletConnector from '../onchain/WalletConnector';
 import { BountyStatus } from '@/lib/types/api';
 
 type CurationType = 'newest' | 'popular' | 'high-reward' | 'few-answers';

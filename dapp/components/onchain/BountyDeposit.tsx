@@ -7,10 +7,11 @@ import {
 } from "@coinbase/onchainkit/transaction";
 import type { LifecycleStatus, TransactionResponseType } from "@coinbase/onchainkit/transaction";
 import { APIError } from "@coinbase/onchainkit/api";
-import { base } from "wagmi/chains";
 import { ethers } from "ethers";
 import { Award } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
+
+import { getActiveChain } from "@/lib/onchain";
 
 import contract from "@/contracts/MultiTokenBountyVault.json" assert { type: "json" };
 
@@ -36,7 +37,6 @@ type Props = {
 };
 
 const VAULT_ADDRESS = (process.env.NEXT_PUBLIC_VAULT_ADDRESS || '0x0000') as `0x${string}`;
-const ANVIL_CHAIN_ID = 31337;
 
 export default function BountyDeposit({
   rewardEth,
@@ -55,10 +55,7 @@ export default function BountyDeposit({
   const [status, setStatus] = useState<string>('init');
   const [isCalled, setIsCalled] = useState<boolean>(false);
 
-  const chainId = useMemo(
-    () => process.env.NEXT_PUBLIC_ENVIRONMENT === 'local' ? ANVIL_CHAIN_ID : base.id,
-    []
-  );
+  const chainId = useMemo(() => getActiveChain().id, []);
 
   const calls = async () => {
     if (!userWallet) {
