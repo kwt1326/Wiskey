@@ -94,7 +94,7 @@ export function ProblemDetail() {
   };
 
   const isOwner = auth.userWallet?.toUpperCase() === bounty.postedBy.toUpperCase();
-  const hasUserAnswered = bounty.answers?.some(a => a.responderWallet === auth.userWallet);
+  const hasUserAnswered = bounty.answers?.some(a => a.responderWallet.toUpperCase() === auth.userWallet?.toUpperCase());
   const isCompleted = bounty.status === 'completed';
 
   const handleSubmitAnswer = async () => {

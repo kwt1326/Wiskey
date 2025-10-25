@@ -27,7 +27,7 @@ export function MyBounties() {
   const _hasError = myBounties.error || myAnswers.error;
 
   const getUserAnswerStatus = (bounty: any) =>
-    bounty.answers?.find((a: Answer) => a.author?.walletAddress === auth.userWallet)
+    bounty.answers?.find((a: Answer) => a.author?.walletAddress.toUpperCase() === auth.userWallet?.toUpperCase())
       ? AnswerStatus.WINNER : AnswerStatus.PENDING;
 
   const renderBountyCard = (bounty: Bounty, type: 'posted' | 'answered') => {
