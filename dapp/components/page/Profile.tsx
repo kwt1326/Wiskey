@@ -197,12 +197,13 @@ export function Profile() {
                         <div className="flex items-center space-x-2 mt-1">
                           <Badge
                             variant="secondary"
-                            className={`text-xs px-2 py-0.5 ${activity.status === 'Open' ? 'bg-emerald-100 text-emerald-700' :
-                                activity.status === 'Pending' ? 'bg-teal-100 text-teal-700' :
-                                  activity.status === 'Won' ? 'bg-amber-100 text-amber-700' :
+                            className={`text-xs px-2 py-0.5 ${activity.status === 'open' ? 'bg-emerald-100 text-emerald-700' :
+                                activity.status === 'pending' ? 'bg-teal-100 text-teal-700' :
+                                  activity.status === 'winner' ? 'bg-amber-100 text-amber-700' :
                                     'bg-slate-100 text-slate-700'
                               }`}
                           >
+                            <>{console.log(activity)}</>
                             {activity.status}
                           </Badge>
                           <span className="text-xs text-slate-500">

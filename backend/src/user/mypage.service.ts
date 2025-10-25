@@ -59,7 +59,7 @@ export class MyPageService {
 
     const bounties = await this.bountyRepository.find({
       where: { creator: { id: user.id } },
-      select: ['id', 'title', 'content', 'createdAt'],
+      select: ['id', 'title', 'content', 'createdAt', 'status'],
       order: { createdAt: 'DESC' },
       take: 5,
     });

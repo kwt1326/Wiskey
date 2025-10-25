@@ -129,11 +129,11 @@ export class BountyService {
   }
 
   private calculateRemaining(expiresAt: Date | null): string {
-    if (!expiresAt) return '만료일 없음';
+    if (!expiresAt) return 'No expiration date';
     const diff = expiresAt.getTime() - Date.now();
-    if (diff <= 0) return '만료됨';
+    if (diff <= 0) return 'Expired';
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
-    return days > 0 ? `${days}일 남음` : `${hours}시간 남음`;
+    return days > 0 ? `${days} days remaining` : `${hours} hours remaining`;
   }
 }

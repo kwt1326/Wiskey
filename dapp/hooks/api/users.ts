@@ -48,6 +48,8 @@ export function useMyPageStats() {
     queryKey: MYPAGE_KEYS.stats(walletAddress || ''),
     queryFn: () => apiClient.getMyPageStats(),
     enabled: isConnected && !!walletAddress,
+    staleTime: 0,
+    gcTime: 0
   });
 }
 
@@ -60,5 +62,7 @@ export function useRecentActivities() {
     queryKey: MYPAGE_KEYS.activities(walletAddress || ''),
     queryFn: () => apiClient.getRecentActivities(),
     enabled: isConnected && !!walletAddress,
+    staleTime: 0,
+    gcTime: 0
   });
 }

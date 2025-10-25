@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Award, Clock, User, CheckCircle, Lock } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -24,36 +24,36 @@ import { useBountyById } from '@/hooks/api/bounties';
 import { useCreateAnswer } from '@/hooks/api/answers';
 import { useSelectWinner } from '@/hooks/api/winners';
 
-interface ProblemDetailProps {
-  bountyId: string;
-}
-
-export function ProblemDetail({ bountyId }: ProblemDetailProps) {
+export function ProblemDetail() {
   const router = useRouter();
   const auth = useAuth();
   const [answerContent, setAnswerContent] = useState('');
+  const [id, setId] = useState<string | undefined | null>(undefined);
   
   // Fetch bounty details
-  const { data: apiBounty, isLoading: bountyLoading, error: bountyError } = useBountyById(parseInt(bountyId));
+  const { data: apiBounty, isLoading: bountyLoading, error: bountyError } = useBountyById(id ? parseInt(id) : null);
   
   // Mutations
   const createAnswerMutation = useCreateAnswer();
   const selectWinnerMutation = useSelectWinner();
-  
-  if (bountyLoading) {
+
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    const value = query.get('id');
+    setId(value);
+  }, []);
+
+  if (!id || bountyLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
-        <div className="flex items-center space-x-2 text-emerald-600">
-          <div className="w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
-          <span className="font-medium">Loading bounty...</span>
-        </div>
+      <div className="fixed flex flex-col items-center justify-center text-gray-500">
+        <p className="mt-4 text-sm m-auto">Loading...</p>
       </div>
     );
   }
 
   if (bountyError) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+      <div className="min-h-screen from-slate-50 to-slate-100 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">Error loading bounty</p>
           <Button onClick={() => router.back()} variant="outline">
@@ -66,7 +66,7 @@ export function ProblemDetail({ bountyId }: ProblemDetailProps) {
 
   if (!apiBounty) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+      <div className="min-h-screen from-slate-50 to-slate-100 flex items-center justify-center">
         <div className="text-center">
           <p className="text-slate-600 mb-4">Bounty not found</p>
           <Button onClick={() => router.back()} variant="outline">
@@ -103,7 +103,7 @@ export function ProblemDetail({ bountyId }: ProblemDetailProps) {
     try {
       await createAnswerMutation.mutateAsync({
         content: answerContent,
-        bountyId: parseInt(bountyId)
+        bountyId: parseInt(id)
       });
       setAnswerContent('');
       toast.success('Answer submitted successfully!');
@@ -118,7 +118,7 @@ export function ProblemDetail({ bountyId }: ProblemDetailProps) {
     
     try {
       await selectWinnerMutation.mutateAsync({
-        bountyId: parseInt(bountyId),
+        bountyId: parseInt(id),
         answerId: answerId
       });
       toast.success('Reward sent 🎉');
@@ -140,7 +140,7 @@ export function ProblemDetail({ bountyId }: ProblemDetailProps) {
   };
 
   return (
-    <div className="flex flex-1 flex-col min-h-0 w-full">
+    <div className="flex flex-1 flex-col min-h-0 w-full bg-gradient-to-br">
       {/* Header */}
       <div className="bg-white/90 backdrop-blur-sm border-b border-emerald-200/50 px-5 py-4 sticky top-0 z-40">
         <div className="flex items-center space-x-4">
