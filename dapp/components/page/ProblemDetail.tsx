@@ -93,7 +93,7 @@ export function ProblemDetail() {
     })) || []
   };
 
-  const isOwner = auth.userWallet === bounty.postedBy;
+  const isOwner = auth.userWallet?.toUpperCase() === bounty.postedBy.toUpperCase();
   const hasUserAnswered = bounty.answers?.some(a => a.responderWallet === auth.userWallet);
   const isCompleted = bounty.status === 'completed';
 
