@@ -328,7 +328,7 @@ export function ProblemDetail() {
                       </Badge>
                     )}
                   </div>
-                  
+                  <>{console.log("[TEST]", auth.userWallet, bounty.postedBy, !isCompleted, !answer.isWinner)}</>
                   {isOwner && !isCompleted && !answer.isWinner && (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
