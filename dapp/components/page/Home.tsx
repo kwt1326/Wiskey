@@ -137,7 +137,7 @@ export function Home() {
                 <Card
                   key={bounty.id}
                   className="bg-white/95 backdrop-blur-sm border border-emerald-200/50 shadow-sm hover:shadow-lg hover:border-emerald-300/70 transition-all cursor-pointer active:scale-[0.98] rounded-3xl"
-                  onClick={() => router.push(`/problems/detail?id=${bounty.id}`)}
+                  onClick={() => router.push(`/problem/detail?id=${bounty.id}`)}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4 mb-4">

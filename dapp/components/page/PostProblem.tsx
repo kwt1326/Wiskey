@@ -65,7 +65,7 @@ export function PostProblem() {
   const handleViewBounty = () => {
     setShowSuccessModal(false);
     if (createdBountyId) {
-      router.push(`/problems/detail?id=${createdBountyId}`);
+      router.push(`/problem/detail?id=${createdBountyId}`);
     } else {
       router.push('/');
     }

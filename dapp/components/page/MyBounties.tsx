@@ -37,7 +37,7 @@ export function MyBounties() {
       <Card
         key={bounty.id}
         className="w-full bg-white/80 backdrop-blur-sm border border-slate-200/50 shadow-sm hover:shadow-md transition-all cursor-pointer"
-        onClick={() => router.push(`/problems/detail?id=${bounty.id}`)}
+        onClick={() => router.push(`/problem/detail?id=${bounty.id}`)}
       >
         <CardContent className="p-4">
           <div className="flex items-start justify-between mb-3">

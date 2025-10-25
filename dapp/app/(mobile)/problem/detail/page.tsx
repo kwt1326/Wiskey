@@ -1,12 +1,8 @@
 import { ProblemDetail } from '@/components/page/ProblemDetail';
 
-export const dynamic = 'force-static'; // 완전 정적 빌드 허용
+export const dynamic = 'force-static';
 
-interface ProblemsDetailPageProps {
-  searchParams: { id?: string };
-}
-
-export default function ProblemsDetailPage({ searchParams }: ProblemsDetailPageProps) {
+export default function ProblemsDetailPage({ searchParams }: any) {
   const id = searchParams.id;
 
   if (!id) {
