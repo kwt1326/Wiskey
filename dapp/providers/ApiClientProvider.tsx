@@ -21,7 +21,7 @@ export function ApiClientProvider({ children }: ApiClientProviderProps) {
 
   // Automatically sync wallet address with API client
   useEffect(() => {
-    apiClient.setWalletAddress(address || null);
+    apiClient.setWalletAddress(address ? address.toLowerCase() : null);
   }, [address]);
 
   const value = {

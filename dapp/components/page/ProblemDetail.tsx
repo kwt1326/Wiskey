@@ -83,11 +83,11 @@ export function ProblemDetail() {
     timeLeft: apiBounty.expiresAt ? 
       new Date(apiBounty.expiresAt).toLocaleDateString() : 'No deadline',
     reward: parseFloat(apiBounty.rewardEth),
-    postedBy: apiBounty.creator.walletAddress,
+    postedBy: apiBounty.creator.walletAddress.toLowerCase(),
     description: apiBounty.content,
     answers: apiBounty.answers?.map(answer => ({
       ...answer,
-      responderWallet: answer.author.walletAddress,
+      responderWallet: answer.author.walletAddress.toLowerCase(),
       timestamp: new Date(answer.createdAt),
       isWinner: false // Would need proper logic
     })) || []

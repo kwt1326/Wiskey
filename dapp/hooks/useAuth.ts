@@ -2,13 +2,8 @@
 
 import { useAccount, useDisconnect } from 'wagmi';
 import { useUserProfile, useConnectWallet } from './api/users';
-import { useEffect, useState, useCallback } from 'react';
-import { User } from '@/lib/types/api';
+import { useEffect, useCallback } from 'react';
 
-/**
- * Unified authentication hook
- * Handles wallet connection and user profile management
- */
 export function useAuth() {
   const { address, isConnected, isConnecting } = useAccount();
   const { disconnect: disconnectWallet } = useDisconnect();
@@ -23,7 +18,8 @@ export function useAuth() {
 
   const connectWallet = useCallback(async (walletAddress: string) => {
     try {
-      await connectWalletMutation.mutateAsync({ walletAddress });
+      const lowerAddress = walletAddress.toLowerCase();
+      await connectWalletMutation.mutateAsync({ walletAddress: lowerAddress });
     } catch (error) {
       console.error('Failed to connect wallet:', error);
     }

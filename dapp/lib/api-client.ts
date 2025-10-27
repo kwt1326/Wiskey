@@ -38,7 +38,7 @@ class ApiClient {
   }
 
   setWalletAddress(address: string | null) {
-    this.walletAddress = address;
+    this.walletAddress = address ? address.toLowerCase() : null;
   }
 
   private requiresAuthentication(method: string, endpoint: string): boolean {
