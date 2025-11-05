@@ -142,24 +142,24 @@ export function ProblemDetail() {
   return (
     <div className="flex flex-1 flex-col min-h-0 w-full bg-gradient-to-br">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-emerald-200/50 px-5 py-4 sticky top-0 z-40">
+      <div className="backdrop-premium border-b border-border px-5 py-4 sticky top-0 z-40">
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => router.push('/')}
-            className="p-3 hover:bg-emerald-100 rounded-2xl min-h-[44px] min-w-[44px]"
+            className="p-3 hover:bg-secondary rounded-2xl min-h-[44px] min-w-[44px]"
           >
-            <ArrowLeft className="h-6 w-6 text-emerald-600" />
+            <ArrowLeft className="h-6 w-6 text-copper" />
           </Button>
-          <h1 className="font-semibold text-slate-900 truncate text-lg flex-1">{bounty.title}</h1>
+          <h1 className="font-semibold text-copper truncate text-lg flex-1">{bounty.title}</h1>
         </div>
       </div>
 
       <div className="flex-1 px-5 py-6 space-y-6 overflow-y-auto min-h-0" style={{ maxHeight: 'calc(100vh - 77px)' }}>
         {/* Completion Banner */}
         {isCompleted && (
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-5 rounded-2xl flex items-center space-x-4">
+          <div className="bg-copper-gradient text-white p-5 rounded-2xl flex items-center space-x-4 shadow-copper">
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
               <CheckCircle className="h-6 w-6" />
             </div>
@@ -171,51 +171,46 @@ export function ProblemDetail() {
         )}
 
         {/* Problem Info Card */}
-        <Card className="bg-white/95 backdrop-blur-sm border border-emerald-200/50 shadow-sm rounded-3xl">
+        <Card variant="glass" className="rounded-3xl">
           <CardHeader className="pb-4">
             <div className="flex items-start justify-between">
-              <CardTitle className="text-xl text-slate-900 leading-7 flex-1 mr-4">{bounty.title}</CardTitle>
+              <CardTitle className="text-xl text-copper leading-7 flex-1 mr-4">{bounty.title}</CardTitle>
               <Badge 
-                variant={bounty.status === 'open' ? 'default' : 'secondary'}
-                className={bounty.status === 'open' 
-                  ? 'bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 text-sm rounded-full' 
-                  : 'bg-slate-100 text-slate-600 px-3 py-1 text-sm rounded-full'
-                }
+                variant={bounty.status === 'open' ? 'copper' : 'glass'}
+                className="px-3 py-1 text-sm rounded-full"
               >
                 {bounty.status === 'open' ? 'Open' : 'Completed'}
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-5">
-            <p className="text-slate-700 leading-relaxed">{bounty.description}</p>
+            <p className="text-muted-foreground leading-relaxed">{bounty.description}</p>
             
-            <div className="bg-emerald-50/50 rounded-3xl p-5">
+            <div className="glass-card rounded-3xl p-5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
-                    <User className="h-4 w-4 text-emerald-600" />
-                    <span className="text-sm text-emerald-700 font-medium">Posted by</span>
+                    <User className="h-4 w-4 text-copper" />
+                    <span className="text-sm text-copper font-medium">Posted by</span>
                   </div>
-                  <span className="font-semibold text-slate-900">
+                  <span className="font-semibold text-foreground">
                     {bounty.postedBy.slice(0, 6)}...{bounty.postedBy.slice(-4)}
                   </span>
                 </div>
                 
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
-                    <Clock className="h-4 w-4 text-emerald-600" />
-                    <span className="text-sm text-emerald-700 font-medium">Time left</span>
+                    <Clock className="h-4 w-4 text-copper" />
+                    <span className="text-sm text-copper font-medium">Time left</span>
                   </div>
-                  <span className="font-semibold text-slate-900">{bounty.timeLeft}</span>
+                  <span className="font-semibold text-foreground">{bounty.timeLeft}</span>
                 </div>
               </div>
               
-              <div className="mt-5 pt-4 border-t border-emerald-200">
-                <div className="flex items-center justify-center space-x-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4">
-                  <div className="w-10 h-10 bg-amber-100 rounded-2xl flex items-center justify-center">
-                    <Award className="h-5 w-5 text-amber-600" />
-                  </div>
-                  <span className="font-bold text-amber-900 text-xl">{bounty.reward} ETH Reward</span>
+              <div className="mt-5 pt-4 border-t border-border">
+                <div className="flex items-center justify-center space-x-3 bg-copper-gradient rounded-2xl p-4 shadow-copper">
+                  <Award className="h-5 w-5 text-white" />
+                  <span className="font-bold text-white text-xl">{bounty.reward} ETH Reward</span>
                 </div>
               </div>
             </div>
@@ -224,18 +219,18 @@ export function ProblemDetail() {
 
         {/* Escrow Info */}
         {!isCompleted && (
-          <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50">
+          <Card variant="premium" className="neon-border">
             <CardContent className="p-5">
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
-                  <Lock className="h-6 w-6 text-blue-600" />
+                <div className="w-12 h-12 bg-copper-gradient rounded-2xl flex items-center justify-center shadow-copper">
+                  <Lock className="h-6 w-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-blue-900 text-lg mb-2">Escrow Protected</h4>
-                  <p className="text-blue-700 leading-relaxed">
+                  <h4 className="font-semibold text-copper text-lg mb-2">Escrow Protected</h4>
+                  <p className="text-muted-foreground leading-relaxed">
                     {bounty.reward} ETH is securely locked until winner selection. Funds are automatically released to the selected winner.
                   </p>
-                  <div className="mt-3 text-sm text-blue-600 font-medium">
+                  <div className="mt-3 text-sm text-copper font-medium">
                     {bounty.timeLeft} remaining
                   </div>
                 </div>
@@ -246,21 +241,23 @@ export function ProblemDetail() {
 
         {/* Submit Answer Section */}
         {!isCompleted && auth.isAuthenticated && !hasUserAnswered && !isOwner && (
-          <Card className="bg-white/90 backdrop-blur-sm border border-slate-200/50 shadow-sm">
+          <Card variant="glass">
             <CardHeader className="pb-4">
-              <CardTitle className="text-xl text-slate-900">Submit Answer</CardTitle>
+              <CardTitle className="text-xl text-copper">Submit Answer</CardTitle>
             </CardHeader>
             <CardContent className="space-y-5">
               <Textarea
+                variant="premium"
                 placeholder="Share your detailed answer here. Be specific and provide examples when possible..."
                 value={answerContent}
                 onChange={(e) => setAnswerContent(e.target.value)}
-                className="min-h-[140px] bg-white border-slate-200 focus:border-emerald-300 focus:ring-emerald-200 rounded-2xl p-4 text-base"
+                className="min-h-[140px] rounded-2xl p-4 text-base"
               />
               <Button
+                variant="premium"
                 onClick={handleSubmitAnswer}
                 disabled={!answerContent.trim() || createAnswerMutation.isPending}
-                className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl py-4 text-lg font-semibold min-h-[56px] disabled:opacity-50"
+                className="w-full rounded-2xl py-4 text-lg font-semibold min-h-[56px] disabled:opacity-50"
               >
                 {createAnswerMutation.isPending ? (
                   <div className="flex items-center space-x-2">
@@ -277,12 +274,12 @@ export function ProblemDetail() {
 
         {/* Connect Wallet Prompt */}
         {!isCompleted && !auth.isAuthenticated && (
-          <Card className="bg-yellow-50 border border-yellow-200">
+          <Card variant="glass" className="border-copper/30">
             <CardContent className="p-4 text-center">
-              <p className="text-yellow-800 mb-3">Connect your wallet to submit an answer</p>
+              <p className="text-muted-foreground mb-3">Connect your wallet to submit an answer</p>
               <Button
-                variant="outline"
-                className="border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+                variant="glass"
+                className="border-copper/50 text-copper hover:bg-copper/10"
               >
                 Connect Wallet
               </Button>
@@ -291,12 +288,12 @@ export function ProblemDetail() {
         )}
 
         {/* Answers Section */}
-        <Card className="bg-white/80 backdrop-blur-sm border border-slate-200/50 shadow-sm">
+        <Card variant="glass">
           <CardHeader>
-            <CardTitle className="text-lg text-slate-900 flex items-center justify-between">
+            <CardTitle className="text-lg text-copper flex items-center justify-between">
               Answers ({bounty.answers?.length || 0})
               {(!bounty.answers || bounty.answers.length === 0) && (
-                <Badge variant="secondary" className="bg-slate-100 text-slate-600">
+                <Badge variant="glass">
                   No answers yet
                 </Badge>
               )}
@@ -306,23 +303,23 @@ export function ProblemDetail() {
             {bounty.answers?.map((answer: any) => (
               <div
                 key={answer.id}
-                className={`p-4 rounded-lg border ${
+                className={`p-4 rounded-lg border hover-lift ${
                   answer.isWinner
-                    ? 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200'
-                    : 'bg-slate-50 border-slate-200'
+                    ? 'bg-copper-gradient/10 border-copper shadow-copper'
+                    : 'glass-card'
                 }`}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center space-x-2">
-                    <User className="h-4 w-4 text-slate-500" />
-                    <span className="text-sm text-slate-600">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
                       {answer.responderWallet.slice(0, 6)}...{answer.responderWallet.slice(-4)}
                     </span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-muted-foreground">
                       {formatTimestamp(answer.timestamp)}
                     </span>
                     {answer.isWinner && (
-                      <Badge className="bg-emerald-500 text-white">
+                      <Badge variant="copper">
                         <CheckCircle className="h-3 w-3 mr-1" />
                         Winner
                       </Badge>
@@ -333,16 +330,17 @@ export function ProblemDetail() {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
+                          variant="premium"
                           size="sm"
-                          className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-lg px-3 py-1"
+                          className="rounded-lg px-3 py-1"
                         >
                           Select Winner
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent>
+                      <AlertDialogContent className="glass-card">
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Select Winner</AlertDialogTitle>
-                          <AlertDialogDescription>
+                          <AlertDialogTitle className="text-copper">Select Winner</AlertDialogTitle>
+                          <AlertDialogDescription className="text-muted-foreground">
                             This will mark this answer as the winner and send the {bounty.reward} ETH reward to{' '}
                             {answer.responderWallet.slice(0, 6)}...{answer.responderWallet.slice(-4)}.
                             This action cannot be undone.
@@ -352,7 +350,7 @@ export function ProblemDetail() {
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handleSelectWinner(answer.id)}
-                            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+                            className="bg-copper-gradient hover:bg-copper-gradient"
                           >
                             Confirm & Send Reward
                           </AlertDialogAction>
@@ -362,16 +360,16 @@ export function ProblemDetail() {
                   )}
                 </div>
                 
-                <p className="text-slate-700">{answer.content}</p>
+                <p className="text-foreground">{answer.content}</p>
               </div>
             ))}
             
             {(!bounty.answers || bounty.answers.length === 0) && (
               <div className="text-center py-8">
-                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <User className="h-6 w-6 text-slate-400" />
+                <div className="w-12 h-12 bg-copper-gradient rounded-full flex items-center justify-center mx-auto mb-3 shadow-copper">
+                  <User className="h-6 w-6 text-white" />
                 </div>
-                <p className="text-slate-500">No answers yet. Be the first to help!</p>
+                <p className="text-muted-foreground">No answers yet. Be the first to help!</p>
               </div>
             )}
           </CardContent>

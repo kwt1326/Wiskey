@@ -13,6 +13,10 @@ const badgeVariants = cva(
       variant: {
         default:
           "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+        copper:
+          "border-transparent bg-gradient-to-r from-[#B8611E] to-[#D08C3A] text-white shadow-[0_2px_10px_rgba(184,98,31,0.3)]",
+        glass:
+          "border-white/10 bg-[rgba(26,26,26,0.7)] backdrop-blur-md text-foreground",
         secondary:
           "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
         destructive:

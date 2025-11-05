@@ -12,6 +12,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        premium: "bg-gradient-to-br from-[#B8611E] to-[#D08C3A] text-white hover:from-[#D08C3A] hover:to-[#E09F47] shadow-[0_4px_15px_rgba(184,98,31,0.4)] hover:shadow-[0_6px_25px_rgba(184,98,31,0.5)] hover:-translate-y-0.5 active:translate-y-0",
+        glass: "bg-[rgba(26,26,26,0.7)] backdrop-blur-xl border border-white/10 text-foreground hover:bg-[rgba(26,26,26,0.85)] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_10px_30px_rgba(0,0,0,0.5)]",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:

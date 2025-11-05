@@ -36,35 +36,26 @@ export function MyBounties() {
     return (
       <Card
         key={bounty.id}
-        className="w-full bg-white/80 backdrop-blur-sm border border-slate-200/50 shadow-sm hover:shadow-md transition-all cursor-pointer"
+        variant="glass"
+        className="w-full hover-lift cursor-pointer"
         onClick={() => router.push(`/problem/detail?id=${bounty.id}`)}
       >
         <CardContent className="p-4">
           <div className="flex items-start justify-between mb-3">
-            <h3 className="font-semibold text-slate-900 line-clamp-2 flex-1 mr-3">
+            <h3 className="font-semibold text-copper line-clamp-2 flex-1 mr-3">
               {bounty.title}
             </h3>
             <div className="flex flex-col items-end space-y-1">
               <Badge 
-                variant={bounty.status === 'open' ? 'default' : 'secondary'}
-                className={bounty.status === 'open' 
-                  ? 'bg-emerald-500 hover:bg-emerald-600 text-white' 
-                  : 'bg-slate-100 text-slate-600'
-                }
+                variant={bounty.status === 'open' ? 'copper' : 'glass'}
               >
                 {bounty.status === 'open' ? 'Open' : 'Completed'}
               </Badge>
               
               {type === 'answered' && answerStatus && (
                 <Badge 
-                  variant={answerStatus === 'winner' ? 'default' : 'secondary'}
-                  className={
-                    answerStatus === 'winner' 
-                      ? 'bg-emerald-500 text-white text-xs' 
-                      : answerStatus === 'pending'
-                      ? 'bg-yellow-100 text-yellow-700 text-xs'
-                      : 'bg-slate-100 text-slate-600 text-xs'
-                  }
+                  variant={answerStatus === 'winner' ? 'copper' : 'glass'}
+                  className="text-xs"
                 >
                   {answerStatus === 'winner' && <CheckCircle className="h-3 w-3 mr-1" />}
                   {answerStatus === 'winner' ? 'Winner' : 
@@ -74,31 +65,31 @@ export function MyBounties() {
             </div>
           </div>
           
-          <p className="text-slate-600 text-sm mb-4 line-clamp-2">
+          <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
             {bounty.content}
           </p>
           
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1">
-                <Award className="h-4 w-4 text-amber-500" />
-                <span className="font-semibold text-slate-900">{parseFloat(bounty.rewardEth || '0')} ETH</span>
+                <Award className="h-4 w-4 text-copper" />
+                <span className="font-semibold text-foreground">{parseFloat(bounty.rewardEth || '0')} ETH</span>
               </div>
               
-              <div className="flex items-center space-x-1 text-slate-500">
+              <div className="flex items-center space-x-1 text-muted-foreground">
                 <Clock className="h-4 w-4" />
                 <span className="text-sm">{bounty.expiresAt ? new Date(bounty.expiresAt).toLocaleDateString() : 'No deadline'}</span>
               </div>
             </div>
             
-            <div className="text-xs text-slate-500">
+            <Badge variant="glass" className="text-xs">
               {bounty.answerCount} answer{bounty.answerCount !== 1 ? 's' : ''}
-            </div>
+            </Badge>
           </div>
           
           {type === 'posted' && bounty.status === 'open' && bounty.answerCount > 0 && (
-            <div className="mt-3 pt-3 border-t border-slate-100">
-              <p className="text-sm text-emerald-600 font-medium">
+            <div className="mt-3 pt-3 border-t border-border">
+              <p className="text-sm text-copper font-medium">
                 {bounty.answerCount} answer{bounty.answerCount !== 1 ? 's' : ''} waiting for review
               </p>
             </div>
@@ -110,27 +101,28 @@ export function MyBounties() {
 
   const renderEmptyState = (type: 'posted' | 'answered') => (
     <div className="text-center py-12">
-      <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div className="w-16 h-16 bg-copper-gradient rounded-full flex items-center justify-center mx-auto mb-4 shadow-copper">
         {type === 'posted' ? (
-          <Award className="h-8 w-8 text-slate-400" />
+          <Award className="h-8 w-8 text-white" />
         ) : (
-          <User className="h-8 w-8 text-slate-400" />
+          <User className="h-8 w-8 text-white" />
         )}
       </div>
-      <h3 className="text-lg font-semibold text-slate-900 mb-2">
+      <h3 className="text-lg font-semibold text-copper mb-2">
         {type === 'posted' ? 'No bounties posted yet' : 'No bounties answered yet'}
       </h3>
-      <p className="text-slate-600 mb-6">
+      <p className="text-muted-foreground mb-6">
         {type === 'posted' 
           ? 'Create your first bounty and get answers from the community!'
           : 'Start helping others by answering bounties and earn rewards!'
         }
       </p>
       <Button
+        variant="premium"
         onClick={() =>
           router.push(type === 'posted' ? '/postProblem' : '/')
         }
-        className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-6 py-2 rounded-xl"
+        className="px-6 py-2 rounded-xl"
       >
         {type === 'posted' ? 'Post First Bounty' : 'Browse Bounties'}
       </Button>
@@ -141,28 +133,28 @@ export function MyBounties() {
     <>
       <PageMainWrapper>
         {/* Header */}
-        <div className="bg-white/90 backdrop-blur-sm border-b border-slate-200/50 px-5 py-4 sticky top-0 z-40">
+        <div className="backdrop-premium border-b border-border px-5 py-4 sticky top-0 z-40">
           <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-copper-gradient rounded-xl flex items-center justify-center shadow-copper">
               <FileText className="h-5 w-5 text-white" />
             </div>
-            <h1 className="text-2xl font-semibold text-slate-900">My Bounties</h1>
+            <h1 className="text-2xl font-semibold text-copper">My Bounties</h1>
           </div>
         </div>
 
         {/* Content */}
         <div className="flex-1 px-5 py-6 overflow-y-auto min-h-0" style={{ height: "calc(100vh - 344px)" }}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex h-full w-full flex-col min-h-0">
-            <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-2 h-18">
+            <TabsList className="grid w-full grid-cols-2 glass-card rounded-2xl p-2 h-18">
               <TabsTrigger
                 value="posted"
-                className="rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white text-base font-medium py-3"
+                className="rounded-xl data-[state=active]:bg-copper-gradient data-[state=active]:text-white data-[state=active]:shadow-copper text-base font-medium py-3"
               >
                 Posted ({postedBounties.length})
               </TabsTrigger>
               <TabsTrigger
                 value="answered"
-                className="rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white text-base font-medium py-3"
+                className="rounded-xl data-[state=active]:bg-copper-gradient data-[state=active]:text-white data-[state=active]:shadow-copper text-base font-medium py-3"
               >
                 Answered ({answeredBounties.length})
               </TabsTrigger>
@@ -193,34 +185,34 @@ export function MyBounties() {
 
       <MobileBottomSection className="border-slate-200/50">
         {(postedBounties.length > 0 || answeredBounties.length > 0) && (
-          <div className="border-b border-slate-200/50 px-5 py-4">
-            <Card className="border border-slate-200/50 bg-gradient-to-r from-slate-50 to-slate-100">
+          <div className="border-b border-border px-5 py-4">
+            <Card variant="premium">
               <CardContent className="p-4">
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
-                    <div className="text-xl font-bold text-emerald-600">
+                    <div className="text-xl font-bold text-copper text-glow-copper">
                       {postedBounties.reduce((sum, bounty) => sum + parseFloat(bounty.rewardEth || '0'), 0).toFixed(3)}
                     </div>
-                    <div className="text-sm font-medium text-slate-500">ETH Posted</div>
+                    <div className="text-sm font-medium text-muted-foreground">ETH Posted</div>
                   </div>
                   <div>
-                    <div className="text-xl font-bold text-amber-600">
+                    <div className="text-xl font-bold text-copper text-glow-copper">
                       {
                         answeredBounties.filter(
                           (bounty) => getUserAnswerStatus(bounty) === 'winner',
                         ).length
                       }
                     </div>
-                    <div className="text-sm font-medium text-slate-500">Wins</div>
+                    <div className="text-sm font-medium text-muted-foreground">Wins</div>
                   </div>
                   <div>
-                    <div className="text-xl font-bold text-blue-600">
+                    <div className="text-xl font-bold text-copper text-glow-copper">
                       {answeredBounties
                         .filter((bounty) => getUserAnswerStatus(bounty) === 'winner')
                         .reduce((sum, bounty) => sum + parseFloat(bounty.rewardEth || '0'), 0)
                         .toFixed(3)}
                     </div>
-                    <div className="text-sm font-medium text-slate-500">ETH Earned</div>
+                    <div className="text-sm font-medium text-muted-foreground">ETH Earned</div>
                   </div>
                 </div>
               </CardContent>

@@ -67,13 +67,13 @@ export function Home() {
     <>
       <PageMainWrapper>
         {/* Header */}
-        <div className="bg-white/90 backdrop-blur-sm border-b border-emerald-200/50 px-5 py-4 sticky top-0 z-40">
+        <div className="backdrop-premium border-b border-border px-5 py-4 sticky top-0 z-40">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-lg">S3</span>
+              <div className="w-12 h-12 bg-copper-gradient rounded-2xl flex items-center justify-center shadow-copper">
+                <span className="text-white font-bold text-lg">W</span>
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">wiskey</h1>
+              <h1 className="text-2xl font-bold text-copper text-glow-copper">wiskey</h1>
             </div>
             
             <WalletConnector onConnect={auth.connectWallet}/>
@@ -81,7 +81,7 @@ export function Home() {
         </div>
 
         {/* Horizontal Tabs */}
-        <div className="bg-white/80 backdrop-blur-sm border-b border-emerald-200/30 px-5 py-3">
+        <div className="backdrop-premium border-b border-border px-5 py-3">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -91,8 +91,8 @@ export function Home() {
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
                   className={`flex items-center space-x-2 px-4 py-3 rounded-2xl whitespace-nowrap transition-all min-h-[44px] ${isActive
-                      ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md'
-                      : 'bg-emerald-50/50 text-emerald-700 hover:bg-emerald-100/70'
+                      ? 'bg-copper-gradient text-white shadow-copper'
+                      : 'glass-card text-foreground hover:bg-secondary'
                     }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -112,10 +112,10 @@ export function Home() {
           style={{ height: 'calc(100vh - 154px - var(--mobile-bottom-section-height, 0px))' }}
         >
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-xl font-semibold text-slate-900">
+            <h2 className="text-xl font-semibold text-copper">
               {tabs.find(t => t.id === activeTab)?.label} Bounties
             </h2>
-            <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 border-emerald-200 px-3 py-1 rounded-full">
+            <Badge variant="glass">
               {displayedBounties?.filter(b => b.status === BountyStatus.OPEN).length || 0} Open
             </Badge>
           </div>
@@ -123,8 +123,8 @@ export function Home() {
           {/* Loading State */}
           {bounties.isLoading && (
             <div className="flex items-center justify-center py-8">
-              <div className="flex items-center space-x-2 text-emerald-600">
-                <div className="w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+              <div className="flex items-center space-x-2 text-copper">
+                <div className="w-6 h-6 border-2 border-copper border-t-transparent rounded-full animate-spin"></div>
                 <span className="font-medium">Loading bounties...</span>
               </div>
             </div>
@@ -136,31 +136,28 @@ export function Home() {
               {displayedBounties?.map((bounty) => (
                 <Card
                   key={bounty.id}
-                  className="bg-white/95 backdrop-blur-sm border border-emerald-200/50 shadow-sm hover:shadow-lg hover:border-emerald-300/70 transition-all cursor-pointer active:scale-[0.98] rounded-3xl"
+                  variant="glass"
+                  className="hover-lift cursor-pointer active:scale-[0.98] rounded-3xl"
                   onClick={() => router.push(`/problem/detail?id=${bounty.id}`)}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4 mb-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <Award className="h-6 w-6 text-emerald-600" />
+                      <div className="w-12 h-12 bg-copper-gradient rounded-2xl flex items-center justify-center flex-shrink-0 shadow-copper">
+                        <Award className="h-6 w-6 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-2">
-                          <h3 className="font-semibold text-slate-900 line-clamp-2 text-lg leading-6 mr-3">
+                          <h3 className="font-semibold text-foreground line-clamp-2 text-lg leading-6 mr-3">
                             {bounty.title}
                           </h3>
                           <Badge
-                            variant="default"
-                            className={`px-3 py-1 text-sm rounded-full ${
-                              bounty.status === BountyStatus.OPEN
-                                ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
-                                : 'bg-gray-500 hover:bg-gray-600 text-white'
-                            }`}
+                            variant={bounty.status === BountyStatus.OPEN ? 'copper' : 'glass'}
+                            className="px-3 py-1 text-sm rounded-full"
                           >
                             {bounty.status === BountyStatus.OPEN ? 'Open' : 'Completed'}
                           </Badge>
                         </div>
-                        <p className="text-slate-600 line-clamp-2 leading-relaxed mb-4">
+                        <p className="text-muted-foreground line-clamp-2 leading-relaxed mb-4">
                           {bounty.content}
                         </p>
                       </div>
@@ -168,22 +165,20 @@ export function Home() {
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-2 bg-amber-50 px-3 py-2 rounded-2xl">
-                          <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center">
-                            <Award className="h-3 w-3 text-amber-600" />
-                          </div>
-                          <span className="font-bold text-amber-800">{parseFloat(bounty.rewardEth || '0')} ETH</span>
+                        <div className="flex items-center space-x-2 bg-copper-gradient px-3 py-2 rounded-2xl shadow-copper">
+                          <Award className="h-4 w-4 text-white" />
+                          <span className="font-bold text-white">{parseFloat(bounty.rewardEth || '0')} ETH</span>
                         </div>
 
-                        <div className="flex items-center space-x-2 text-slate-500">
+                        <div className="flex items-center space-x-2 text-muted-foreground">
                           <Clock className="h-4 w-4" />
                           <span className="text-sm font-medium">{bounty.remainingTime ?? 'No deadline'}</span>
                         </div>
                       </div>
 
-                      <div className="text-sm text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full font-medium">
+                      <Badge variant="glass" className="text-sm font-medium">
                         {bounty.answerCount} answer{bounty.answerCount !== 1 ? 's' : ''}
-                      </div>
+                      </Badge>
                     </div>
                   </CardContent>
                 </Card>
@@ -193,21 +188,22 @@ export function Home() {
 
           {!bounties.isLoading && (!displayedBounties || displayedBounties.length === 0) && (
             <div className="text-center py-16">
-              <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                <Award className="h-12 w-12 text-emerald-600" />
+              <div className="w-24 h-24 bg-copper-gradient rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-copper">
+                <Award className="h-12 w-12 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-3">
+              <h3 className="text-xl font-semibold text-copper mb-3">
                 {activeTab === 'newest' ? 'No Bounties Yet' : `No ${tabs.find(t => t.id === activeTab)?.label} Bounties`}
               </h3>
-              <p className="text-slate-600 mb-8 px-8 leading-relaxed">
+              <p className="text-muted-foreground mb-8 px-8 leading-relaxed">
                 {activeTab === 'newest'
                   ? 'Be the first to post a bounty and get answers from the community!'
                   : 'Try switching to a different tab or post your own bounty.'
                 }
               </p>
               <Button
+                variant="premium"
                 onClick={() => router.push('/postProblem')}
-                className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold min-h-[56px] shadow-lg"
+                className="px-8 py-4 rounded-2xl text-lg font-semibold min-h-[56px]"
               >
                 <Plus className="h-5 w-5 mr-3" />
                 Post First Bounty
@@ -219,8 +215,9 @@ export function Home() {
       {/* Floating Action Button */}
       {(displayedBounties?.length ?? 0) > 0 && (
         <Button
+          variant="premium"
           onClick={() => router.push('/postProblem')}
-          className="absolute right-5 w-16 h-16 rounded-3xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all z-30 active:scale-95"
+          className="absolute right-5 w-16 h-16 rounded-3xl z-30 active:scale-95"
           style={{
             bottom: `calc(${MOBILE_BOTTOM_SECTION_PADDING} - 25px)`,
           }}

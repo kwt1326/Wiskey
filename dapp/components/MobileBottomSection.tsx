@@ -77,12 +77,6 @@ export function MobileBottomSection({
       style={{ bottom: 0 }}
     >
       {children}
-      <div className="flex items-center justify-center py-3">
-        <div className="flex items-center space-x-2 text-sm text-slate-500">
-          <div className="w-5 h-5 bg-gradient-to-r from-blue-500 to-indigo-600 rounded" />
-          <span>{brandingText}</span>
-        </div>
-      </div>
       <BottomNavigation />
     </div>
   );

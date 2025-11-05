@@ -23,7 +23,7 @@ export function BottomNavigation() {
   };
 
   return (
-    <div className="px-6 py-4">
+    <div className="px-6 py-4 backdrop-premium border-t border-border">
       <div className="flex items-center justify-around">
         {navItems.map(({ href, icon: Icon, label }) => {
           const active = isActive(href);
@@ -34,8 +34,8 @@ export function BottomNavigation() {
               href={href}
               className={`flex flex-col items-center space-y-2 px-4 py-3 rounded-2xl transition-all min-h-[60px] min-w-[80px] ${
                 active
-                  ? 'text-emerald-600 bg-emerald-100'
-                  : 'text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 active:bg-emerald-100'
+                  ? 'text-copper bg-copper-gradient/10 shadow-copper/20'
+                  : 'text-muted-foreground hover:text-copper hover:bg-copper/5 active:bg-copper/10'
               }`}
             >
               <Icon className="h-6 w-6" />

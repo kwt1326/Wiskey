@@ -1,0 +1,219 @@
+/* Wiskey Premium Luxury Theme */
+/* This file contains custom utility classes for the premium dark theme */
+
+@layer utilities {
+  /* Gradient Backgrounds */
+  .bg-premium-gradient {
+    background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+  }
+
+  .bg-copper-gradient {
+    background: linear-gradient(135deg, var(--copper-start) 0%, var(--copper-end) 100%);
+  }
+
+  .bg-copper-gradient-hover {
+    background: linear-gradient(135deg, var(--copper-end) 0%, var(--copper-bright) 100%);
+  }
+
+  /* Glass Morphism Effects */
+  .glass-card {
+    background: rgba(26, 26, 26, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+      0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .glass-overlay {
+    background: var(--glass-overlay);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Text Glows */
+  .text-glow-copper {
+    text-shadow: 
+      0 0 10px rgba(184, 98, 31, 0.5),
+      0 0 20px rgba(184, 98, 31, 0.3),
+      0 0 30px rgba(184, 98, 31, 0.2);
+  }
+
+  .text-glow-white {
+    text-shadow: 
+      0 0 10px rgba(255, 255, 255, 0.3),
+      0 0 20px rgba(255, 255, 255, 0.2);
+  }
+
+  /* Premium Shadows */
+  .shadow-premium {
+    box-shadow: 
+      0 4px 20px rgba(0, 0, 0, 0.5),
+      0 0 1px rgba(255, 255, 255, 0.1) inset;
+  }
+
+  .shadow-copper {
+    box-shadow: 
+      0 4px 20px rgba(184, 98, 31, 0.3),
+      0 8px 40px rgba(184, 98, 31, 0.2);
+  }
+
+  /* Neon Accents */
+  .neon-border {
+    border: 1px solid rgba(93, 58, 255, 0.3);
+    box-shadow: 
+      0 0 10px rgba(93, 58, 255, 0.2),
+      inset 0 0 10px rgba(93, 58, 255, 0.1);
+  }
+
+  /* Hover Effects */
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 8px 30px rgba(0, 0, 0, 0.6),
+      0 0 1px rgba(255, 255, 255, 0.1) inset;
+  }
+
+  /* Premium Button Styles */
+  .btn-premium {
+    background: linear-gradient(135deg, var(--copper-start) 0%, var(--copper-end) 100%);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 
+      0 4px 15px rgba(184, 98, 31, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-premium:hover {
+    background: linear-gradient(135deg, var(--copper-end) 0%, var(--copper-bright) 100%);
+    box-shadow: 
+      0 6px 25px rgba(184, 98, 31, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .btn-premium:active {
+    transform: translateY(0);
+    box-shadow: 
+      0 2px 10px rgba(184, 98, 31, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  /* Dark Premium Cards */
+  .card-premium {
+    background: linear-gradient(145deg, #1a1a1a 0%, #121212 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 
+      0 10px 40px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  }
+
+  /* Vignette Overlay */
+  .vignette-overlay {
+    position: relative;
+  }
+
+  .vignette-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--vignette);
+    pointer-events: none;
+  }
+
+  /* Copper Text */
+  .text-copper {
+    background: linear-gradient(135deg, var(--copper-start) 0%, var(--copper-bright) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Animated Gradient Border */
+  .gradient-border {
+    position: relative;
+    border-radius: 1rem;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--copper-start), var(--copper-end), rgba(93, 58, 255, 0.5));
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  .gradient-border-inner {
+    background: var(--background);
+    border-radius: calc(1rem - 2px);
+    padding: 1rem;
+  }
+
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Metallic Shine Effect */
+  .metallic-shine {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .metallic-shine::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 70%
+    );
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+  }
+
+  @keyframes shine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+  }
+
+  /* Premium Input Styles */
+  .input-premium {
+    background: rgba(26, 26, 26, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--foreground);
+    transition: all 0.3s ease;
+  }
+
+  .input-premium:focus {
+    outline: none;
+    border-color: var(--copper-start);
+    box-shadow: 
+      0 0 0 3px rgba(184, 98, 31, 0.1),
+      0 0 15px rgba(184, 98, 31, 0.2);
+  }
+
+  /* Backdrop Blur */
+  .backdrop-premium {
+    backdrop-filter: blur(40px) saturate(180%);
+    background: rgba(26, 26, 26, 0.8);
+  }
+}

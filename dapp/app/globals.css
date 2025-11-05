@@ -1,5 +1,6 @@
 @import "../styles/index.css";
 @import "../styles/globals.css";
+@import "../styles/theme.css";
 
 * {
   box-sizing: border-box;
@@ -14,7 +15,7 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter, var(--default-font-family));
+  font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -74,32 +74,32 @@ export function PostProblem() {
   return (
     <div className="flex flex-1 flex-col min-h-0 w-full">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-emerald-200/50 px-5 py-4 sticky top-0 z-40">
+      <div className="backdrop-premium border-b border-border px-5 py-4 sticky top-0 z-40">
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => router.push('/')}
-            className="p-3 hover:bg-emerald-100 rounded-2xl min-h-[44px] min-w-[44px]"
+            className="p-3 hover:bg-secondary rounded-2xl min-h-[44px] min-w-[44px]"
           >
-            <ArrowLeft className="h-6 w-6 text-emerald-600" />
+            <ArrowLeft className="h-6 w-6 text-copper" />
           </Button>
-          <h1 className="text-xl font-semibold text-slate-900">Post a New Bounty</h1>
+          <h1 className="text-xl font-semibold text-copper">Post a New Bounty</h1>
         </div>
       </div>
 
       <div className="flex-1 px-5 py-6 space-y-6 overflow-y-auto min-h-0" style={{ maxHeight: 'calc(100vh - 77px)' }}>
         {/* Wallet Connection Check */}
         {!auth.isAuthenticated && (
-          <Card className="bg-yellow-50 border border-yellow-200">
+          <Card variant="glass" className="border-[#E09F47]/30">
             <CardContent className="p-5">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-yellow-100 rounded-2xl flex items-center justify-center">
-                  <Award className="h-6 w-6 text-yellow-600" />
+                <div className="w-12 h-12 bg-copper-gradient rounded-2xl flex items-center justify-center shadow-copper">
+                  <Award className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-yellow-900 text-lg">Wallet Required</h4>
-                  <p className="text-yellow-800">Connect your wallet to post a bounty</p>
+                  <h4 className="font-semibold text-copper text-lg">Wallet Required</h4>
+                  <p className="text-muted-foreground">Connect your wallet to post a bounty</p>
                 </div>
               </div>
             </CardContent>
@@ -107,46 +107,49 @@ export function PostProblem() {
         )}
 
         {/* Main Form */}
-        <Card className="bg-white/95 backdrop-blur-sm border border-emerald-200/50 shadow-sm rounded-3xl">
+        <Card variant="glass" className="rounded-3xl">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl text-slate-900">Bounty Details</CardTitle>
+            <CardTitle className="text-xl text-copper">Bounty Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-3">
-              <Label htmlFor="title" className="text-slate-700 text-lg font-medium">Title</Label>
+              <Label htmlFor="title" className="text-foreground text-lg font-medium">Title</Label>
               <Input
                 id="title"
+                variant="premium"
                 placeholder="What problem do you need help with?"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="bg-white border-emerald-200 focus:border-emerald-400 focus:ring-emerald-200 rounded-2xl p-4 text-base min-h-[52px]"
+                className="rounded-2xl p-4 text-base min-h-[52px]"
                 disabled={!auth.isAuthenticated}
               />
             </div>
 
             <div className="space-y-3">
-              <Label htmlFor="description" className="text-slate-700 text-lg font-medium">Description</Label>
+              <Label htmlFor="description" className="text-foreground text-lg font-medium">Description</Label>
               <Textarea
                 id="description"
+                variant="premium"
                 placeholder="Provide detailed information about your problem. Include any relevant context, requirements, or examples."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="min-h-[140px] bg-white border-slate-200 focus:border-emerald-300 focus:ring-emerald-200 rounded-2xl p-4 text-base"
+                className="min-h-[140px] rounded-2xl p-4 text-base"
                 disabled={!auth.isAuthenticated}
               />
             </div>
 
             <div className="space-y-3">
-              <Label htmlFor="reward" className="text-slate-700 text-lg font-medium">Reward (ETH)</Label>
+              <Label htmlFor="reward" className="text-foreground text-lg font-medium">Reward (ETH)</Label>
               <Input
                 id="reward"
+                variant="premium"
                 type="number"
                 step="0.001"
                 min="0.001"
                 placeholder="0.01"
                 value={reward}
                 onChange={(e) => setReward(e.target.value)}
-                className="bg-white border-slate-200 focus:border-emerald-300 focus:ring-emerald-200 rounded-2xl p-4 text-base min-h-[52px]"
+                className="rounded-2xl p-4 text-base min-h-[52px]"
                 disabled={!auth.isAuthenticated}
               />
             </div>
@@ -154,15 +157,15 @@ export function PostProblem() {
         </Card>
 
         {/* Escrow Info */}
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50">
+        <Card variant="premium" className="neon-border">
           <CardContent className="p-5">
             <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
-                <Lock className="h-6 w-6 text-blue-600" />
+              <div className="w-12 h-12 bg-copper-gradient rounded-2xl flex items-center justify-center shadow-copper">
+                <Lock className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-blue-900 text-lg mb-2">Escrow Protection</h4>
-                <p className="text-blue-700 leading-relaxed">
+                <h4 className="font-semibold text-copper text-lg mb-2">Escrow Protection</h4>
+                <p className="text-muted-foreground leading-relaxed">
                   Your reward will be locked in escrow until completion. Funds are automatically released to the selected winner. 
                   If no winner is selected within 7 days, you can reclaim your deposit.
                 </p>
@@ -183,7 +186,7 @@ export function PostProblem() {
           />
 
           {/* Fee Info */}
-          <div className="text-center text-slate-500">
+          <div className="text-center text-muted-foreground">
             <p>Platform fee: 2.5% • Gas fees apply</p>
           </div>
         </div>
@@ -191,30 +194,31 @@ export function PostProblem() {
 
       {/* Success Modal */}
       <AlertDialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
-        <AlertDialogContent className="max-w-sm mx-auto">
+        <AlertDialogContent className="max-w-sm mx-auto glass-card">
           <AlertDialogHeader className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-copper-gradient rounded-full flex items-center justify-center mx-auto mb-4 shadow-copper">
               <CheckCircle className="h-8 w-8 text-white" />
             </div>
-            <AlertDialogTitle className="text-xl">Bounty Created Successfully!</AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-600">
+            <AlertDialogTitle className="text-xl text-copper">Bounty Created Successfully!</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
               Your bounty has been posted and is now visible to the community. The reward has been locked in escrow.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-col space-y-2">
             <Button
+              variant="premium"
               onClick={handleViewBounty}
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl"
+              className="w-full rounded-xl"
             >
               View Bounty
             </Button>
             <Button
-              variant="outline"
+              variant="glass"
               onClick={() => {
                 setShowSuccessModal(false);
                 router.push('/');
               }}
-              className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl"
+              className="w-full rounded-xl"
             >
               Back to Home
             </Button>

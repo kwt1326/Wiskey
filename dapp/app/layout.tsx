@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Source_Code_Pro } from "next/font/google";
+import { Inter, Source_Code_Pro, Poppins } from "next/font/google";
 
 import { ThemeProvider } from "@/components/themeProvider";
 
@@ -16,6 +16,12 @@ const sourceCodePro = Source_Code_Pro({
   subsets: ["latin"],
 });
 
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_PROJECT_NAME ?? "wiskey",
   description:
@@ -28,13 +34,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${sourceCodePro.variable}`}>
+    <html lang="en" suppressHydrationWarning className="dark">
+      <body className={`${inter.variable} ${sourceCodePro.variable} ${poppins.variable}`}>
         <RootProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="light"
-            enableSystem
+            defaultTheme="dark"
+            enableSystem={false}
             disableTransitionOnChange
           >
             {children}
