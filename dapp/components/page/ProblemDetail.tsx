@@ -122,7 +122,7 @@ export function ProblemDetail() {
         answerId: answerId
       });
       toast.success('Reward sent 🎉');
-      setTimeout(() => router.push('/'), 2000);
+      setTimeout(() => router.push('/home'), 2000);
     } catch (error) {
       console.error(error)
       toast.error('Failed to select winner. Please try again.');
@@ -147,7 +147,7 @@ export function ProblemDetail() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/home')}
             className="p-3 hover:bg-secondary rounded-2xl min-h-[44px] min-w-[44px]"
           >
             <ArrowLeft className="h-6 w-6 text-copper" />

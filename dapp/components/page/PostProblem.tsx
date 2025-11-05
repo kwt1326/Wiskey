@@ -67,7 +67,7 @@ export function PostProblem() {
     if (createdBountyId) {
       router.push(`/problem/detail?id=${createdBountyId}`);
     } else {
-      router.push('/');
+      router.push('/home');
     }
   };
 
@@ -79,7 +79,7 @@ export function PostProblem() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/home')}
             className="p-3 hover:bg-secondary rounded-2xl min-h-[44px] min-w-[44px]"
           >
             <ArrowLeft className="h-6 w-6 text-copper" />
@@ -216,7 +216,7 @@ export function PostProblem() {
               variant="glass"
               onClick={() => {
                 setShowSuccessModal(false);
-                router.push('/');
+                router.push('/home');
               }}
               className="w-full rounded-xl"
             >

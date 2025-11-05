@@ -179,7 +179,7 @@ export function MyBounties() {
       <Button
         variant="premium"
         onClick={() =>
-          router.push(type === 'posted' ? '/postProblem' : '/')
+          router.push(type === 'posted' ? '/postProblem' : '/home')
         }
         className="px-6 py-2 rounded-xl"
       >

@@ -1,5 +1,5 @@
-import { Home } from '@/components/page/Home';
+import { Onboarding } from '@/components/page/Onboarding';
 
-export default function HomePage() {
-  return <Home />;
+export default function MyBountiesPage() {
+  return <Onboarding homePath={'/home'} />;
 }
