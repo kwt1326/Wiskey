@@ -75,9 +75,13 @@ export function Home() {
           </div>
         </div>
 
-        {/* Horizontal Tabs */}
-        <div className="backdrop-premium border-b border-border px-5 py-3">
-          <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
+        {/* Feature Categories */}
+        <div className="bg-gradient-to-b from-transparent to-transparent px-6 py-5" style={{ borderBottom: '1px solid rgba(184, 98, 31, 0.15)' }}>
+          <div className="mb-4">
+            <h3 className="text-xl font-semibold text-copper mb-3">Categories</h3>
+          </div>
+
+          <div className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -85,21 +89,19 @@ export function Home() {
                 <button
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
-                  className={`flex items-center space-x-2 px-4 py-3 rounded-2xl whitespace-nowrap transition-all min-h-[44px] ${isActive
-                      ? 'bg-copper-gradient text-white shadow-copper'
-                      : 'glass-card text-foreground hover:bg-secondary'
+                  className={`flex flex-col items-center justify-center min-w-[80px] h-20 rounded-2xl transition-all ${isActive
+                      ? 'button-luxury metallic-shine text-white neon-shadow'
+                      : 'glass-effect text-[#a0a0a0] hover:bg-[rgba(42,42,42,0.9)]'
                     }`}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span className="font-medium">{tab.label}</span>
-                  {isActive && bounties.isLoading && (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  )}
+                  <Icon className="h-6 w-6 mb-1" style={isActive ? { filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.3))' } : {}} />
+                  <span className="text-xs font-medium text-center px-2">{tab.label}</span>
                 </button>
               );
             })}
           </div>
         </div>
+
 
         {/* Content */}
         <div
