@@ -17,7 +17,7 @@ export const MOBILE_BOTTOM_SECTION_PADDING =
 
 export function MobileBottomSection({
   children,
-  brandingText = 'Powered by Base',
+  brandingText: _brandingText = 'Powered by Base',
   className,
 }: MobileBottomSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -71,7 +71,7 @@ export function MobileBottomSection({
     <div
       ref={sectionRef}
       className={cn(
-        'fixed w-full bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-emerald-200/50',
+        'fixed w-full bottom-0 left-0 right-0 bg-[#070707] border-t border-[#2a2a2a]',
         className,
       )}
       style={{ bottom: 0 }}

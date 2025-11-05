@@ -203,3 +203,10 @@
 html {
   font-size: var(--font-size);
 }
+
+/* Fix for TabsTrigger active state in Tailwind v4 */
+[role="tab"][data-state="active"] {
+  background-color: #b8621f !important;
+  color: white !important;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+}

@@ -157,15 +157,15 @@ export function PostProblem() {
         </Card>
 
         {/* Escrow Info */}
-        <Card variant="premium" className="neon-border">
-          <CardContent className="p-5">
-            <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-copper-gradient rounded-2xl flex items-center justify-center shadow-copper">
-                <Lock className="h-6 w-6 text-white" />
+        <Card className="bg-gradient-to-r from-[#b8621f] to-[#a35619] border-0 shadow-sm rounded-2xl">
+          <CardContent className="p-4">
+            <div className="flex items-start space-x-3">
+              <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <Lock className="h-5 w-5 text-white" />
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-copper text-lg mb-2">Escrow Protection</h4>
-                <p className="text-muted-foreground leading-relaxed">
+                <h4 className="font-semibold text-white mb-1">Escrow Protection</h4>
+                <p className="text-sm text-white/90 leading-relaxed">
                   Your reward will be locked in escrow until completion. Funds are automatically released to the selected winner. 
                   If no winner is selected within 7 days, you can reclaim your deposit.
                 </p>
@@ -186,8 +186,8 @@ export function PostProblem() {
           />
 
           {/* Fee Info */}
-          <div className="text-center text-muted-foreground">
-            <p>Platform fee: 2.5% • Gas fees apply</p>
+          <div className="text-center text-xs text-[#a0a0a0]">
+            <p>Platform fee: 10% • Gas fees apply</p>
           </div>
         </div>
       </div>

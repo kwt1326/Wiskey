@@ -17,9 +17,10 @@ import { Card, CardContent } from '../ui/card';
 import { MobileBottomSection, MOBILE_BOTTOM_SECTION_PADDING } from '../MobileBottomSection';
 import { useAuth } from '@/hooks/useAuth';
 import { useBounties } from '@/hooks/api/bounties';
+import { BountyStatus } from '@/lib/types/api';
 import PageMainWrapper from '../PageMainWrapper';
 import WalletConnector from '../onchain/WalletConnector';
-import { BountyStatus } from '@/lib/types/api';
+import WiskeyLogo from '../WiskeyLogo';
 
 type CurationType = 'newest' | 'popular' | 'high-reward' | 'few-answers';
 
@@ -69,13 +70,7 @@ export function Home() {
         {/* Header */}
         <div className="backdrop-premium border-b border-border px-5 py-4 sticky top-0 z-40">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-copper-gradient rounded-2xl flex items-center justify-center shadow-copper">
-                <span className="text-white font-bold text-lg">W</span>
-              </div>
-              <h1 className="text-2xl font-bold text-copper text-glow-copper">wiskey</h1>
-            </div>
-            
+            <WiskeyLogo />
             <WalletConnector onConnect={auth.connectWallet}/>
           </div>
         </div>

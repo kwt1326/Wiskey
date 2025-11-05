@@ -158,7 +158,7 @@ export function Profile() {
                     <div className="w-10 h-10 bg-copper-gradient rounded-2xl flex items-center justify-center mx-auto mb-2 shadow-copper">
                       <Award className="h-5 w-5 text-white" />
                     </div>
-                    <div className="text-2xl font-bold text-copper text-glow-copper">{rewardsEarned.toFixed(3)}</div>
+                    <div className="text-2xl font-bold text-copper text-glow-green">{rewardsEarned.toFixed(3)}</div>
                     <div className="text-xs text-muted-foreground font-medium">ETH Earned</div>
                   </CardContent>
                 </Card>

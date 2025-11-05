@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getActiveChain } from "@/lib/onchain";
 
 import contract from "@/contracts/MultiTokenBountyVault.json" assert { type: "json" };
+import { Button } from "../ui/button";
 
 export type OnDepositSuccessPayload = {
   txHash: string;
@@ -151,19 +152,19 @@ export default function BountyDeposit({
       content = (
         <div className="flex items-center space-x-3">
           <Award className="h-6 w-6" />
-          <span>{isFormValid ? "Create Bounty" : "Create Bounty"}</span>
+          <span>Create Bounty</span>
         </div>
       );
     }
 
     return (
-      <button
+      <Button
         onClick={onSubmit}
         disabled={baseDisabled}
-        className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl py-4 text-lg font-semibold min-h-[56px] disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-[#b8621f] hover:bg-[#a35619] text-white rounded-2xl py-3 font-semibold min-h-[48px] disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {content}
-      </button>
+      </Button>
     );
   };
 
