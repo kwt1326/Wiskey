@@ -9,18 +9,12 @@ export function BottomNavigation() {
   const pathname = usePathname();
 
   const navItems = [
-    { href: '/', icon: HomeIcon, label: 'Home' },
+    { href: '/home', icon: HomeIcon, label: 'Home' },
     { href: '/myBounties', icon: FileText, label: 'My Bounties' },
     { href: '/profile', icon: User, label: 'Profile' },
   ];
 
-  const isActive = (href: string) => {
-    if (href === '/') {
-      return pathname === '/';
-    }
-
-    return pathname.startsWith(href);
-  };
+  const isActive = (href: string) => pathname.startsWith(href);
 
   return (
     <div className="px-6 py-4 backdrop-premium border-t border-border" style={{
